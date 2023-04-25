@@ -305,22 +305,25 @@ class SumDataset(data.Dataset):
             rrdic = {}
             for s in x['ftest']:
                 rrdic[x['ftest'][s]] = s
-            for i in range(len(x['ftest'])):
-                nodes.append('Test')
-                types.append(0)
-                if len(rrdic[i].split(":")) > 1:
-                    tokens = ".".join(rrdic[i].split(":")[0].split('.')[-2:] + [rrdic[i].split(":")[1]])
-                else:
-                    tokens = ".".join(rrdic[i].split(":")[0].split('.')[-2:])
-                #print(tokens, self.splitCamel(tokens))
-                #tmpids = self.Get_Em(self.splitCamel(tokens), self.Code_Voc)#tokenizer.convert_tokens_to_ids(tokenizer.tokenize(tokens))#print(rrdict[i])
-                #print(tmpids)
-                ans = self.splitCamel(tokens)
-                ans.remove('.')
-                #print(ans)
-                #print(self.splitCamel(tokens), self.splitCamel(tokens).remove('.'))
-                #assert(0)
-                textb.append(ans)#(self.pad_seq(tmpids, 10))
+            try:
+                for i in range(len(x['ftest'])):
+                    nodes.append('Test')
+                    types.append(0)
+                    if len(rrdic[i].split(":")) > 1:
+                        tokens = ".".join(rrdic[i].split(":")[0].split('.')[-2:] + [rrdic[i].split(":")[1]])
+                    else:
+                        tokens = ".".join(rrdic[i].split(":")[0].split('.')[-2:])
+                    #print(tokens, self.splitCamel(tokens))
+                    #tmpids = self.Get_Em(self.splitCamel(tokens), self.Code_Voc)#tokenizer.convert_tokens_to_ids(tokenizer.tokenize(tokens))#print(rrdict[i])
+                    #print(tmpids)
+                    ans = self.splitCamel(tokens)
+                    ans.remove('.')
+                    #print(ans)
+                    #print(self.splitCamel(tokens), self.splitCamel(tokens).remove('.'))
+                    #assert(0)
+                    textb.append(ans)#(self.pad_seq(tmpids, 10))
+            except:
+                print(ans)
             rrdic = {}
             #for s in x['rtest']:
             #    rrdic[x['rtest'][s]] = s
