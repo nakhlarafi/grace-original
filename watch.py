@@ -64,7 +64,7 @@ for _, i in enumerate(p):
 with open(pr + 'result_final_%d_%s_%s'%(seed,lr, batch_size), 'w') as pp:
     pp.write("lr: %f seed %d batch_size %d\n"%(lr, seed, batch_size))
     pp.write('num: %s\n'%len(p))
-    pp.write('%d: %d\n'%(10, eps[10]))
+    # pp.write('%d: %d\n'%(10, eps[10]))
     pp.write(str(sorted(eps.items(), key=lambda x:x[1])))
 
 print(len(score))
