@@ -36,10 +36,10 @@ class GAT(nn.Module):
         state = self.linear(state)
         degree2 = inputad
         s = state.size(1)
-        state = self.subconnect(state, lambda _x: self.lstm(torch.bmm(degree2, state).reshape(-1, self.hiddensize), (torch.zeros(_x.reshape(-1, self.hiddensize).size()).cuda(), _x.reshape(-1, self.hiddensize)))[1].reshape(-1, s, self.hiddensize)) #state + torch.matmul(degree2, state)
-        # state = self.linearSecond(state)
-        if left is not None:
-            state = state[:,left.size(1):,:]
+        # state = self.subconnect(state, lambda _x: self.lstm(torch.bmm(degree2, state).reshape(-1, self.hiddensize), (torch.zeros(_x.reshape(-1, self.hiddensize).size()).cuda(), _x.reshape(-1, self.hiddensize)))[1].reshape(-1, s, self.hiddensize)) #state + torch.matmul(degree2, state)
+        # # state = self.linearSecond(state)
+        # if left is not None:
+        #     state = state[:,left.size(1):,:]
 
         
         # GAT New Code
