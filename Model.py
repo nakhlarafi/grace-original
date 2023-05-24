@@ -26,13 +26,13 @@ class NlEncoder(nn.Module):
         self.token_embedding1 = nn.Embedding(args.Nl_Vocsize, self.embedding_size)
 
         self.text_embedding = nn.Embedding(20, self.embedding_size)
-        self.transformerBlocksTree = nn.ModuleList(
-            [rightTransformerBlock(self.embedding_size, 8, self.feed_forward_hidden, 0.1) for _ in range(5)])
-        self.resLinear = nn.Linear(self.embedding_size, 2)
-        self.pos = PositionalEmbedding(self.embedding_size)
+        # self.transformerBlocksTree = nn.ModuleList(
+        #     [rightTransformerBlock(self.embedding_size, 8, self.feed_forward_hidden, 0.1) for _ in range(5)])
+        # self.resLinear = nn.Linear(self.embedding_size, 2)
+        # self.pos = PositionalEmbedding(self.embedding_size)
         self.loss = nn.CrossEntropyLoss()
-        self.norm = LayerNorm(self.embedding_size)
-        self.lstm = nn.LSTM(self.embedding_size // 2, int(self.embedding_size / 4), batch_first=True, bidirectional=True)
+        # self.norm = LayerNorm(self.embedding_size)
+        # self.lstm = nn.LSTM(self.embedding_size // 2, int(self.embedding_size / 4), batch_first=True, bidirectional=True)
         self.conv = nn.Conv2d(self.embedding_size, self.embedding_size, (1, 10))
         self.resLinear2 = nn.Linear(self.embedding_size, 1)
     def forward(self, input_node, inputtype, inputad, res, inputtext, linenode, linetype, linemus):

@@ -26,7 +26,7 @@ class GAT(nn.Module):
         self.softmax = nn.Softmax(dim=1)
         # Dropout layer to be applied for attention
         self.dropout = nn.Dropout(dropout)
-        self.subconnect = SublayerConnection(dmodel, 0.1)
+        # self.subconnect = SublayerConnection(dmodel, 0.1)
         self.lstm = nn.LSTMCell(dmodel, dmodel)
     
     def forward(self, state, left, inputad):
