@@ -27,15 +27,15 @@ class GCNN(nn.Module):
         self.linearFourth = nn.Linear(580, 32)
         
     def forward(self, state, left, inputad):
-        print('####  Start GCNN.py #####')
-        print("##### GCNN.py ###### state.shape ########", state.shape)
-        print('-------')
-        print("##### GCNN.py ###### left ########", left)
-        print('-------')
-        print("##### GCNN.py ###### inputad ########", inputad.shape)
-        print('-------')
-        print("##### GCNN.py ###### hiddensize ########", self.hiddensize)
-        print("=========== END GCNN.py ===========")
+        # print('####  Start GCNN.py #####')
+        # print("##### GCNN.py ###### state.shape ########", state.shape)
+        # print('-------')
+        # print("##### GCNN.py ###### left ########", left)
+        # print('-------')
+        # print("##### GCNN.py ###### inputad ########", inputad.shape)
+        # print('-------')
+        # print("##### GCNN.py ###### hiddensize ########", self.hiddensize)
+        # print("=========== END GCNN.py ===========")
         if left is not None:
             state = torch.cat([left, state], dim=1)
         #state = torch.cat([left, state], dim=1)
@@ -61,7 +61,7 @@ class GCNN(nn.Module):
         front = state.shape[0]
 
         # ============= Forward Code ==============
-        print("##### GCNN.py ###### state.shape ########", state.shape)
+        # print("##### GCNN.py ###### state.shape ########", state.shape)
         # g = self.linearThird(state).view(n_nodes, self.n_heads, self.n_hidden)
         g = self.linearThird(state).view(front, n_nodes, self.n_hidden)
         # g -> torch.Size([1, 580, 32])
@@ -83,17 +83,9 @@ class GCNN(nn.Module):
         # e_mat -> torch.Size([32, 580, 580])
 
         dense_inputad = inputad.to_dense()
-        print("====================")
-        print("==========dense_inputad=======")
-        print(dense_inputad.shape)
-        print("=================")
+
         e_masked = e_mat.masked_fill(dense_inputad == 0, 0)
         # e_masked -> torch.Size([32, 580, 580])
-
-        print("====================")
-        print("==========e_masked=======")
-        print(e_masked.shape)
-        print("=================")
 
         state = self.activation(self.linearFourth(e_masked))
         state = state.reshape(front, 580, 32)
@@ -125,17 +117,17 @@ class GCNN(nn.Module):
         degree2 = inputad
         s = state.size(1)
 
-        print("##### GCNN.py ###### state shape before SubConnect ########", state.shape)
+        #print("##### GCNN.py ###### state shape before SubConnect ########", state.shape)
         state = self.subconnect(state, lambda _x: self.lstm(torch.bmm(degree2, state).reshape(-1, self.hiddensize), (torch.zeros(_x.reshape(-1, self.hiddensize).size()).cuda(), _x.reshape(-1, self.hiddensize)))[1].reshape(-1, s, self.hiddensize)) #state + torch.matmul(degree2, state)
         
-        print("##### GCNN.py ###### state shape after SubConnect ########", state.shape)
+        #print("##### GCNN.py ###### state shape after SubConnect ########", state.shape)
         # lambda _x: self.lstm(torch.bmm(degree2, state).reshape(-1, self.hiddensize), (torch.zeros(_x.reshape(-1, self.hiddensize).size()).cuda(), _x.reshape(-1, self.hiddensize)))[1].reshape(-1, s, self.hiddensize)
         
         
         state = self.linearSecond(state)
 
         
-        print("##### GCNN.py ###### return state ########", state.shape)
-        print("=========== END GCNN.py ===========")
+        #print("##### GCNN.py ###### return state ########", state.shape)
+        #print("=========== END GCNN.py ===========")
         return state#self.dropout(state)[:,50:,:]
 
