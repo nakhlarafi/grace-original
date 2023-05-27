@@ -26,13 +26,13 @@ class NlEncoder(nn.Module):
         self.token_embedding1 = nn.Embedding(args.Nl_Vocsize, self.embedding_size)
 
         self.text_embedding = nn.Embedding(20, self.embedding_size)
-        # self.transformerBlocksTree = nn.ModuleList(
-        #     [rightTransformerBlock(self.embedding_size, 8, self.feed_forward_hidden, 0.1) for _ in range(5)])
-        # self.resLinear = nn.Linear(self.embedding_size, 2)
-        # self.pos = PositionalEmbedding(self.embedding_size)
+        self.transformerBlocksTree = nn.ModuleList(
+            [rightTransformerBlock(self.embedding_size, 8, self.feed_forward_hidden, 0.1) for _ in range(5)])
+        self.resLinear = nn.Linear(self.embedding_size, 2)
+        self.pos = PositionalEmbedding(self.embedding_size)
         self.loss = nn.CrossEntropyLoss()
-        # self.norm = LayerNorm(self.embedding_size)
-        # self.lstm = nn.LSTM(self.embedding_size // 2, int(self.embedding_size / 4), batch_first=True, bidirectional=True)
+        self.norm = LayerNorm(self.embedding_size)
+        self.lstm = nn.LSTM(self.embedding_size // 2, int(self.embedding_size / 4), batch_first=True, bidirectional=True)
         self.conv = nn.Conv2d(self.embedding_size, self.embedding_size, (1, 10))
         self.resLinear2 = nn.Linear(self.embedding_size, 1)
     def forward(self, input_node, inputtype, inputad, res, inputtext, linenode, linetype, linemus):
@@ -44,15 +44,17 @@ class NlEncoder(nn.Module):
         x = nodeem
         lineem = self.token_embedding1(linenode)
         x = torch.cat([x, lineem], dim=1)
+        count = 0
         for trans in self.transformerBlocks:
-            x = trans.forward(x, nlmask, inputad)
+            x = trans.forward(x, nlmask, inputad, count)
+            count+=1
         x = x[:,:input_node.size(1)]
+        print("========== Start =============")
+        print("##### Model.py ###### x.shape ########", x.shape)
         resSoftmax = F.softmax(self.resLinear2(x).squeeze(-1).masked_fill(resmask==0, -1e9), dim=-1)
+        
         loss = -torch.log(resSoftmax.clamp(min=1e-10, max=1)) * res
         loss = loss.sum(dim=-1)
         return loss, resSoftmax, x
 
        
-
-
-

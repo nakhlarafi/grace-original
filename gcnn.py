@@ -1,3 +1,4 @@
+
 from torch import nn
 import torch
 from gelu import GELU
@@ -8,33 +9,133 @@ class GCNN(nn.Module):
         self.hiddensize = dmodel
         self.linear = nn.Linear(dmodel, dmodel)
         self.linearSecond = nn.Linear(dmodel, dmodel)
+        self.linearThird = nn.Linear(dmodel, dmodel)
+
         self.activate = GELU()
         self.dropout = nn.Dropout(p=0.1)
         self.subconnect = SublayerConnection(dmodel, 0.1)
         self.lstm = nn.LSTMCell(dmodel, dmodel)
+
+
+        self.is_concat = True
+        self.n_hidden = self.hiddensize
+        leaky_relu_negative_slope = 0.2
+
+        self.attn = nn.Linear(self.n_hidden * 2, 1, bias=False)
+        self.activation = nn.LeakyReLU(negative_slope=leaky_relu_negative_slope)
+        self.softmax = nn.Softmax(dim=1)
+        self.linearFourth = nn.Linear(580, 32)
+        
     def forward(self, state, left, inputad):
-        #print(state.size(), left.size())
+        print('####  Start GCNN.py #####')
+        print("##### GCNN.py ###### state.shape ########", state.shape)
+        print('-------')
+        print("##### GCNN.py ###### left ########", left)
+        print('-------')
+        print("##### GCNN.py ###### inputad ########", inputad.shape)
+        print('-------')
+        print("##### GCNN.py ###### hiddensize ########", self.hiddensize)
+        print("=========== END GCNN.py ===========")
         if left is not None:
             state = torch.cat([left, state], dim=1)
         #state = torch.cat([left, state], dim=1)
+        # state = self.linear(state)
+        # degree2 = inputad
+        # s = state.size(1)
+
+        # print("##### GCNN.py ###### state shape before SubConnect ########", state.shape)
+        # state = self.subconnect(state, lambda _x: self.lstm(torch.bmm(degree2, state).reshape(-1, self.hiddensize), (torch.zeros(_x.reshape(-1, self.hiddensize).size()).cuda(), _x.reshape(-1, self.hiddensize)))[1].reshape(-1, s, self.hiddensize)) #state + torch.matmul(degree2, state)
+        
+        # print("##### GCNN.py ###### state shape after SubConnect ########", state.shape)
+        # # lambda _x: self.lstm(torch.bmm(degree2, state).reshape(-1, self.hiddensize), (torch.zeros(_x.reshape(-1, self.hiddensize).size()).cuda(), _x.reshape(-1, self.hiddensize)))[1].reshape(-1, s, self.hiddensize)
+        
+        
+        # state = self.linearSecond(state)
+        # if left is not None:
+        #     state = state[:,left.size(1):,:]
+
+        # ============== GAT CODE ================
+        
+        self.n_heads = state.shape[-1]
+        n_nodes = state.shape[1]
+        front = state.shape[0]
+
+        # ============= Forward Code ==============
+        print("##### GCNN.py ###### state.shape ########", state.shape)
+        # g = self.linearThird(state).view(n_nodes, self.n_heads, self.n_hidden)
+        g = self.linearThird(state).view(front, n_nodes, self.n_hidden)
+        # g -> torch.Size([1, 580, 32])
+        g_repeat = g.repeat(n_nodes, 1, 1)
+        # g_repeat -> torch.Size([580, 580, 32])
+
+        g_repeat_interleave = g.repeat_interleave(n_nodes, dim=0)
+        # g_repeat_interleave -> torch.Size([580, 580, 32])
+
+        g_concat = torch.cat([g_repeat_interleave, g_repeat], dim=-1)
+        # g_concat -> torch.Size([580, 580, 64])
+
+        # g_concat = g_concat.view(n_nodes, n_nodes, 2 * self.n_hidden)
+
+        e = self.activation(self.attn(g_concat))
+        # e -> torch.Size([580, 580, 32])
+
+        e_mat = e.view(-1, 580, 580)
+        # e_mat -> torch.Size([32, 580, 580])
+
+        dense_inputad = inputad.to_dense()
+        print("====================")
+        print("==========dense_inputad=======")
+        print(dense_inputad.shape)
+        print("=================")
+        e_masked = e_mat.masked_fill(dense_inputad == 0, 0)
+        # e_masked -> torch.Size([32, 580, 580])
+
+        print("====================")
+        print("==========e_masked=======")
+        print(e_masked.shape)
+        print("=================")
+
+        state = self.activation(self.linearFourth(e_masked))
+        state = state.reshape(front, 580, 32)
+
+        a = self.softmax(e)
+
+        # Apply dropout regularization
+        a = self.dropout(a)
+
+        # state -> torch.Size([1, 580, 32])
+
+        # e = e.squeeze(-1)
+
+        a = self.softmax(state)
+
+        # Apply dropout regularization
+        a = self.dropout(a)
+
+        if list(a.shape) == [27, 580, 32]:
+          attn_res = a * g
+        else:
+          attn_res = torch.einsum('ijh,jhf->ihf', a.transpose(1,2), g)
+
+        state = attn_res.reshape(front, 580, 32)
+
+        # ================= END ===================
+
         state = self.linear(state)
         degree2 = inputad
-        #degree2 = torch.sum(inputad, dim=-2, keepdim=True).clamp(min=1e-6)
-
-        #degree = 1.0 / degree#1.0 / torch.sqrt(degree)
-        #degree2 = 1.0 / torch.sqrt(degree2)
-        #print(degree2.size(), state.size())
-        #degree2 = degree * inputad# * degree 
-        #print(degree2.size(), state.size())
-        #tmp = torch.matmul(degree2, state)
-        #tmp = degree2.spmm(state)
-        #state = self.subconnect(state, lambda _x: _x + torch.bmm(degree2, state))
         s = state.size(1)
-        #print(state.view(-1, self.hiddensize).size())
+
+        print("##### GCNN.py ###### state shape before SubConnect ########", state.shape)
         state = self.subconnect(state, lambda _x: self.lstm(torch.bmm(degree2, state).reshape(-1, self.hiddensize), (torch.zeros(_x.reshape(-1, self.hiddensize).size()).cuda(), _x.reshape(-1, self.hiddensize)))[1].reshape(-1, s, self.hiddensize)) #state + torch.matmul(degree2, state)
-        #state = self.subconnect(state, lambda _x: self.com(_x, _x, torch.bmm(degree2, state))) #state + torch.matmul(degree2, state)
+        
+        print("##### GCNN.py ###### state shape after SubConnect ########", state.shape)
+        # lambda _x: self.lstm(torch.bmm(degree2, state).reshape(-1, self.hiddensize), (torch.zeros(_x.reshape(-1, self.hiddensize).size()).cuda(), _x.reshape(-1, self.hiddensize)))[1].reshape(-1, s, self.hiddensize)
+        
+        
         state = self.linearSecond(state)
-        if left is not None:
-            state = state[:,left.size(1):,:]
+
+        
+        print("##### GCNN.py ###### return state ########", state.shape)
+        print("=========== END GCNN.py ===========")
         return state#self.dropout(state)[:,50:,:]
 
