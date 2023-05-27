@@ -29,16 +29,16 @@ class TransformerBlock(nn.Module):
         self.norm = LayerNorm(hidden)
 
     def forward(self, x, mask, inputP, counter):
-        if counter == 0:
-          print("============ Start ==============")
-          print("##### Transfomer.py ###### x.shape ########", x.shape)
-          print('-------')
-          print("##### Transfomer.py ###### mask ########", mask.shape)
-          print('-------')
-          print("##### Transfomer.py ###### inputP.shape ########", inputP.shape)
-          print("========= End Transformer ===========")
+        # if counter == 0:
+          # print("============ Start ==============")
+          # print("##### Transfomer.py ###### x.shape ########", x.shape)
+          # print('-------')
+          # print("##### Transfomer.py ###### mask ########", mask.shape)
+          # print('-------')
+          # print("##### Transfomer.py ###### inputP.shape ########", inputP.shape)
+          # print("========= End Transformer ===========")
         x = self.sublayer4(x, lambda _x: self.Tconv_forward.forward(_x, None, inputP))
         x = self.norm(x)
-        print("##### Transfomer.py ###### x ########", x.shape)
-        print("========= End Transformer ===========")
+        # print("##### Transfomer.py ###### x ########", x.shape)
+        # print("========= End Transformer ===========")
         return self.dropout(x)

@@ -4,7 +4,7 @@ import torch
 from gelu import GELU
 from SubLayerConnection import SublayerConnection
 class GCNN(nn.Module):
-    def __init__(self, dmodel):
+    def __init__(self, dmodel, liner_fourth=2000):
         super(GCNN ,self).__init__()
         self.hiddensize = dmodel
         self.linear = nn.Linear(dmodel, dmodel)
@@ -24,8 +24,7 @@ class GCNN(nn.Module):
         self.attn = nn.Linear(self.n_hidden * 2, 1, bias=False)
         self.activation = nn.LeakyReLU(negative_slope=leaky_relu_negative_slope)
         self.softmax = nn.Softmax(dim=1)
-        print("========dmodel=========", dmodel)
-        self.linearFourth = nn.Linear(2000, 32)
+        self.linearFourth = nn.Linear(liner_fourth, 32)
         
     def forward(self, state, left, inputad):
         # print('####  Start GCNN.py #####')
