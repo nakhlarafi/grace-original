@@ -24,7 +24,7 @@ class GCNN(nn.Module):
         self.attn = nn.Linear(self.n_hidden * 2, 1, bias=False)
         self.activation = nn.LeakyReLU(negative_slope=leaky_relu_negative_slope)
         self.softmax = nn.Softmax(dim=1)
-        self.linearFourth = nn.Linear(580, 32)
+        #self.linearFourth = nn.Linear(n_nodes, 32)
         
     def forward(self, state, left, inputad):
         # print('####  Start GCNN.py #####')
@@ -59,6 +59,7 @@ class GCNN(nn.Module):
         self.n_heads = state.shape[-1]
         n_nodes = state.shape[1]
         front = state.shape[0]
+        self.linearFourth = nn.Linear(n_nodes, 32)
 
         # ============= Forward Code ==============
         # print("##### GCNN.py ###### state.shape ########", state.shape)
