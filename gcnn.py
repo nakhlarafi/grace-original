@@ -1,4 +1,5 @@
 
+
 from torch import nn
 import torch
 from gelu import GELU
@@ -79,7 +80,7 @@ class GCNN(nn.Module):
         e = self.activation(self.attn(g_concat))
         # e -> torch.Size([580, 580, 32])
 
-        e_mat = e.view(-1, 580, 580)
+        e_mat = e.view(front, 580, 580)
         # e_mat -> torch.Size([32, 580, 580])
 
         dense_inputad = inputad.to_dense()
