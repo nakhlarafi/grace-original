@@ -79,7 +79,7 @@ class GCNN(nn.Module):
         e = self.activation(self.attn(g_concat))
         # e -> torch.Size([580, 580, 32])
 
-        e_mat = e.view(front, 580, 580)
+        e_mat = e.view(front, n_nodes, n_nodes)
         # e_mat -> torch.Size([32, 580, 580])
 
         dense_inputad = inputad.to_dense()
@@ -88,7 +88,7 @@ class GCNN(nn.Module):
         # e_masked -> torch.Size([32, 580, 580])
 
         state = self.activation(self.linearFourth(e_masked))
-        state = state.reshape(front, 580, 32)
+        state = state.reshape(front, n_nodes, 32)
 
         a = self.softmax(e)
 
@@ -104,12 +104,12 @@ class GCNN(nn.Module):
         # Apply dropout regularization
         a = self.dropout(a)
 
-        if list(a.shape) == [27, 580, 32]:
+        if list(a.shape) == list(g.shape):
           attn_res = a * g
         else:
           attn_res = torch.einsum('ijh,jhf->ihf', a.transpose(1,2), g)
 
-        state = attn_res.reshape(front, 580, 32)
+        state = attn_res.reshape(front, n_nodes, 32)
 
         # ================= END ===================
 
