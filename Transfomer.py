@@ -1,10 +1,6 @@
-#Alvi
 import torch.nn as nn
-from gcnn import GCNN
-#from GATLayer import GAT
-from Multihead_Attention import MultiHeadedAttention
+from GGANN import GGANN,SpGGANN
 from SubLayerConnection import SublayerConnection
-from DenseLayer import DenseLayer
 from LayerNorm import LayerNorm
 
 class TransformerBlock(nn.Module):
@@ -22,23 +18,23 @@ class TransformerBlock(nn.Module):
         """
 
         super().__init__()
-        self.Tconv_forward = GCNN(dmodel=hidden)
-        #self.Tconv_forward = GAT(dmodel=hidden)
+        #self.Tconv_forward = SpGGANN(hidden,attn_heads)
+        self.Tconv_forward = GGANN(hidden,attn_heads)
         self.sublayer4 = SublayerConnection(size=hidden, dropout=dropout)
         self.dropout = nn.Dropout(p=dropout)
         self.norm = LayerNorm(hidden)
 
     def forward(self, x, mask, inputP, counter):
-        # if counter == 0:
-          # print("============ Start ==============")
-          # print("##### Transfomer.py ###### x.shape ########", x.shape)
-          # print('-------')
-          # print("##### Transfomer.py ###### mask ########", mask.shape)
-          # print('-------')
-          # print("##### Transfomer.py ###### inputP.shape ########", inputP.shape)
-          # print("========= End Transformer ===========")
+        if counter == 0:
+          print("============ Start ==============")
+          print("##### Transfomer.py ###### x.shape ########", x.shape)
+          print('-------')
+          print("##### Transfomer.py ###### mask ########", mask.shape)
+          print('-------')
+          print("##### Transfomer.py ###### inputP.shape ########", inputP.shape)
+          print("========= End Transformer ===========")
         x = self.sublayer4(x, lambda _x: self.Tconv_forward.forward(_x, None, inputP))
         x = self.norm(x)
-        # print("##### Transfomer.py ###### x ########", x.shape)
-        # print("========= End Transformer ===========")
+        print("##### Transfomer.py ###### x ########", x.shape)
+        print("========= End Transformer ===========")
         return self.dropout(x)
