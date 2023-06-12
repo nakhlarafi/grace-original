@@ -262,10 +262,10 @@ class SumDataset(data.Dataset):
                 if x['ltype'][i] not in self.Nl_Voc:
                     self.Nl_Voc[x['ltype'][i]] = len(self.Nl_Voc)
                 linenodes.append(x['ltype'][i])
-                if i in x['lcorrectnum']:
-                    linetypes.append(x['lcorrectnum'][i])
-                else:
-                    linetypes.append(1)
+                # if i in x['lcorrectnum']:
+                #     linetypes.append(x['lcorrectnum'][i])
+                # else:
+                #     linetypes.append(1)
             maxl = max(maxl, len(nodes))
             maxl2 = max(maxl2, len(linenodes))
             ed = {}
