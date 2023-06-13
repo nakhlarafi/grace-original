@@ -102,6 +102,8 @@ def train(t = 5, p='Math'):
       rdic[dev_set.Nl_Voc[x]] = x
     for epoch in range(15):
         index = 0
+        if use_cuda:
+            torch.cuda.empty_cache()
         for dBatch in tqdm(train_set.Get_Train(args.batch_size)):
             if index == 0:
                 accs = []
