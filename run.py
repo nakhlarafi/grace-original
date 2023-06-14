@@ -25,7 +25,7 @@ args = dotdict({
     'NlLen':NlLen_map[sys.argv[2]],
     'CodeLen':CodeLen_map[sys.argv[2]],
     'SentenceLen':10,
-    'batch_size':10,
+    'batch_size':60,
     'embedding_size':32,
     'WoLen':15,
     'Vocsize':100,
@@ -145,7 +145,7 @@ def train(t = 5, p='Math'):
                     bans = lst
                     maxl = score
                     print("find better score " + str(score) + "," + str(score2))
-                    #save_model(model)
+                    save_model(model)
                     #torch.save(model.state_dict(), os.path.join(wandb.run.dir, 'model.pt'))
                 model = model.train()
             for i in range(len(dBatch)):
