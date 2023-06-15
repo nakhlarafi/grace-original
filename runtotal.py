@@ -4,7 +4,7 @@ import time
 import os, sys
 import pickle
 project = sys.argv[1]
-card = [1,2,3]
+card = [0]
 lst = list(range(len(pickle.load(open(project + '.pkl', 'rb')))))
 singlenums = {'Time':1, 'Math':2, "Lang":1, "Chart":3, "Mockito":1, "Closure":1}
 singlenum = singlenums[project]
