@@ -99,7 +99,6 @@ def train(t = 5, p='Math'):
     args.Code_Vocsize = len(train_set.Code_Voc)
     args.Nl_Vocsize = len(train_set.Nl_Voc)
     args.Vocsize = len(train_set.Char_Voc)
-    setup(rank, world_size)
     print(dev_set.ids)
 
     
