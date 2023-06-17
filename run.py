@@ -104,6 +104,7 @@ def train(t = 5, p='Math'):
     
     dist.init_process_group("nccl")
     rank = dist.get_rank()
+    print('-------------',rank)
     print(f"Start running basic DDP example on rank {rank}.")
     model = NlEncoder(args)
     # create model and move it to GPU with id rank
