@@ -10,9 +10,16 @@ from nltk import word_tokenize
 import pickle
 from ScheduledOptim import ScheduledOptim
 from nltk.translate.bleu_score import corpus_bleu
+import tempfile
+import torch
+import torch.distributed as dist
+import torch.nn as nn
+import torch.optim as optim
+import torch.multiprocessing as mp
 import pandas as pd
 import random
 import sys
+from torch.nn.parallel import DistributedDataParallel as DDP
 #import wandb
 #wandb.init(project="codesum")
 class dotdict(dict):
@@ -88,9 +95,14 @@ def train(t = 5, p='Math'):
     model = NlEncoder(args)
     if use_cuda:
         print('using GPU')
-        model = model.cuda()
+        dist.init_process_group("nccl")
+        rank = dist.get_rank()
+        # create model and move it to GPU with id rank
+        device_id = rank % torch.cuda.device_count()
+        model = model().to(device_id)
+        ddp_model = DDP(model, device_ids=[device_id])
     maxl = 1e9
-    optimizer = ScheduledOptim(optim.Adam(model.parameters(), lr=args.lr), args.embedding_size, 4000)
+    optimizer = ScheduledOptim(optim.Adam(ddp_model.parameters(), lr=args.lr), args.embedding_size, 4000)
     maxAcc = 0
     minloss = 1e9
     rdic = {}
@@ -108,14 +120,14 @@ def train(t = 5, p='Math'):
             if index == 0:
                 accs = []
                 loss = []
-                model = model.eval()
+                ddp_model = ddp_model.eval()
                 
                 score2 = []
                 for k, devBatch in tqdm(enumerate(val_set.Get_Train(len(val_set)))):
                         for i in range(len(devBatch)):
                             devBatch[i] = gVar(devBatch[i])
                         with torch.no_grad():
-                            l, pre, _ = model(devBatch[0], devBatch[1], devBatch[2], devBatch[3], devBatch[4], devBatch[5], devBatch[6], devBatch[7])
+                            l, pre, _ = ddp_model(devBatch[0], devBatch[1], devBatch[2], devBatch[3], devBatch[4], devBatch[5], devBatch[6], devBatch[7])
                             resmask = torch.eq(devBatch[0], 2)
                             s = -pre#-pre[:, :, 1]
                             s = s.masked_fill(resmask == 0, 1e9)
@@ -145,12 +157,12 @@ def train(t = 5, p='Math'):
                     bans = lst
                     maxl = score
                     print("find better score " + str(score) + "," + str(score2))
-                    save_model(model)
+                    # save_model(model)
                     #torch.save(model.state_dict(), os.path.join(wandb.run.dir, 'model.pt'))
-                model = model.train()
+                ddp_model = ddp_model.train()
             for i in range(len(dBatch)):
                 dBatch[i] = gVar(dBatch[i])
-            loss, _, _ = model(dBatch[0], dBatch[1], dBatch[2], dBatch[3], dBatch[4], dBatch[5], dBatch[6], dBatch[7])
+            loss, _, _ = ddp_model(dBatch[0], dBatch[1], dBatch[2], dBatch[3], dBatch[4], dBatch[5], dBatch[6], dBatch[7])
             print(loss.mean().item())
             optimizer.zero_grad()
             loss = loss.mean()
