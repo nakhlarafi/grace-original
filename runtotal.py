@@ -3,12 +3,10 @@ from tqdm import tqdm
 import time
 import os, sys
 import pickle
-import torch.distributed as dist
-from torch.nn.parallel import DistributedDataParallel as DDP
 project = sys.argv[1]
 card = [0]
 lst = list(range(len(pickle.load(open(project + '.pkl', 'rb')))))
-singlenums = {'Time':1, 'Math':2, "Lang":1, "Chart":3, "Mockito":1, "Closure":1}
+singlenums = {'Time':5, 'Math':2, "Lang":1, "Chart":3, "Mockito":1, "Closure":1}
 singlenum = singlenums[project]
 totalnum = len(card) * singlenum
 lr = 1e-2
@@ -20,12 +18,15 @@ for i in tqdm(range(int(len(lst) / totalnum) + 1)):
         if totalnum * i + j >= len(lst):
             continue
         cardn =int(j / singlenum)
-        print("CUDA_VISIBLE_DEVICES=1,2,3" + " python3 run.py %d %s %f %d %d")
-        p = subprocess.Popen("CUDA_VISIBLE_DEVICES=1,2,3" + " python3 -m torch.distributed.launch --nproc_per_node=3 --use_env run.py %d %s %f %d %d"%(lst[totalnum * i + j], project, lr, seed, batch_size), shell=True)
+        print("CUDA_VISIBLE_DEVICES="+str(card[cardn]))
+        # p = subprocess.Popen("CUDA_VISIBLE_DEVICES=1,2,3" + " python run.py %d %s %f %d %d"%(lst[totalnum * i + j], project, lr, seed, batch_size), shell=True)
+        # p = subprocess.Popen("CUDA_VISIBLE_DEVICES=" + " torchrun --nnodes=2 --nproc_per_node=2 --rdzv_id=100 --rdzv_backend=c10d --rdzv_endpoint=$MASTER_ADDR:quail:127.0.1.1:29400 run.py %d %s %f %d %d"%(lst[totalnum * i + j], project, lr, seed, batch_size), shell=True)
+        p = subprocess.Popen("CUDA_VISIBLE_DEVICES=0,3" + " torchrun --nnodes=1 --nproc_per_node=3 --rdzv_id=100 --rdzv_backend=c10d --rdzv_endpoint=virya4:29407 run.py %d %s %f %d %d"%(lst[totalnum * i + j], project, lr, seed, batch_size), shell=True)
+
         jobs.append(p)
         time.sleep(10)
     for p in jobs:
         p.wait()
-p = subprocess.Popen("python3 sum.py %s %d %f %d"%(project, seed, lr, batch_size), shell=True)
+p = subprocess.Popen("python sum.py %s %d %f %d"%(project, seed, lr, batch_size), shell=True)
 p.wait()
-subprocess.Popen("python3 watch.py %s %d %f %d"%(project, seed, lr, batch_size),shell=True)            
+subprocess.Popen("python watch.py %s %d %f %d"%(project, seed, lr, batch_size),shell=True)            

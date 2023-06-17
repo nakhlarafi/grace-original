@@ -10,16 +10,12 @@ from nltk import word_tokenize
 import pickle
 from ScheduledOptim import ScheduledOptim
 from nltk.translate.bleu_score import corpus_bleu
-import tempfile
-import torch
-import torch.distributed as dist
-import torch.nn as nn
-import torch.optim as optim
-import torch.multiprocessing as mp
 import pandas as pd
 import random
 import sys
+import torch.distributed as dist
 from torch.nn.parallel import DistributedDataParallel as DDP
+
 #import wandb
 #wandb.init(project="codesum")
 class dotdict(dict):
@@ -46,6 +42,19 @@ args = dotdict({
 })
 os.environ['PYTHONHASHSEED'] = str(args.seed)
 
+def setup(rank, world_size):
+    "Sets up the process group and configuration for PyTorch Distributed Data Parallelism"
+    os.environ["MASTER_ADDR"] = 'localhost'
+    os.environ["MASTER_PORT"] = "12355"
+
+    # Initialize the process group
+    dist.init_process_group("nccl", rank=rank, world_size=world_size)
+
+def cleanup():
+    "Cleans up the distributed environment"
+    dist.destroy_process_group()
+
+
 def save_model(model, dirs = "checkpointcodeSearch"):
     if not os.path.exists(dirs):
         os.makedirs(dirs)
@@ -71,9 +80,6 @@ def gVar(data):
         tensor = tensor.cuda()
     return tensor
 
-world_size = torch.cuda.device_count()
-torch.distributed.init_process_group(backend='nccl')
-
 def train(t = 5, p='Math'):
 
     torch.manual_seed(args.seed)
@@ -93,17 +99,22 @@ def train(t = 5, p='Math'):
     args.Code_Vocsize = len(train_set.Code_Voc)
     args.Nl_Vocsize = len(train_set.Nl_Voc)
     args.Vocsize = len(train_set.Char_Voc)
-
+    setup(rank, world_size)
     print(dev_set.ids)
+
+    
+    dist.init_process_group("nccl")
+    rank = dist.get_rank()
+    print(f"Start running basic DDP example on rank {rank}.")
     model = NlEncoder(args)
+    # create model and move it to GPU with id rank
+    device_id = rank % torch.cuda.device_count()
+    model = DDP(model, device_ids=[device_id])
+    
     if use_cuda:
         print('using GPU')
-        model = model.cuda()
-        # Wrap model with DDP
-        rank = torch.cuda.current_device()
-        model = DDP(model)
-
-        
+        model = model.to(rank)
+    model = DDP(model, device_ids=[rank])
     maxl = 1e9
     optimizer = ScheduledOptim(optim.Adam(model.parameters(), lr=args.lr), args.embedding_size, 4000)
     maxAcc = 0
@@ -173,6 +184,7 @@ def train(t = 5, p='Math'):
 
             optimizer.step_and_update_lr()
             index += 1
+            cleanup()
     return brest, bans, batchn, each_epoch_pred
 
 
