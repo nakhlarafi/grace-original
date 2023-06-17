@@ -4,7 +4,7 @@ import time
 import os, sys
 import pickle
 project = sys.argv[1]
-card = [1,2,3]
+card = [0]
 lst = list(range(len(pickle.load(open(project + '.pkl', 'rb')))))
 singlenums = {'Time':1, 'Math':2, "Lang":1, "Chart":3, "Mockito":1, "Closure":1}
 singlenum = singlenums[project]
@@ -18,7 +18,7 @@ for i in tqdm(range(int(len(lst) / totalnum) + 1)):
         if totalnum * i + j >= len(lst):
             continue
         cardn =int(j / singlenum)
-        print("CUDA_VISIBLE_DEVICES="+str(card[cardn]) + " python3 run.py %d %s %f %d %d")
+        print("CUDA_VISIBLE_DEVICES=1,2,3" + " python3 run.py %d %s %f %d %d")
         p = subprocess.Popen("CUDA_VISIBLE_DEVICES="+str(card[cardn]) + " python3 run.py %d %s %f %d %d"%(lst[totalnum * i + j], project, lr, seed, batch_size), shell=True)
         jobs.append(p)
         time.sleep(10)
