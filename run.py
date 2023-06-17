@@ -109,13 +109,13 @@ def train(t = 5, p='Math'):
     model = NlEncoder(args)
     # create model and move it to GPU with id rank
     device_id = rank % torch.cuda.device_count()
-    model = DDP(model, device_ids=[device_id])
-    
+
     if use_cuda:
         print('using GPU')
-        model = model.cuda()
-        model = model.to(rank)
-    model = DDP(model, device_ids=[rank])
+        model = model.cuda(device_id)
+
+    # wrap the model with DDP
+    model = DDP(model, device_ids=[device_id])
     maxl = 1e9
     optimizer = ScheduledOptim(optim.Adam(model.parameters(), lr=args.lr), args.embedding_size, 4000)
     maxAcc = 0
