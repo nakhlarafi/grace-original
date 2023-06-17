@@ -112,6 +112,7 @@ def train(t = 5, p='Math'):
     
     if use_cuda:
         print('using GPU')
+        model = model.cuda()
         model = model.to(rank)
     model = DDP(model, device_ids=[rank])
     maxl = 1e9
