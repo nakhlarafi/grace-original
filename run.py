@@ -72,7 +72,7 @@ def gVar(data):
     return tensor
 
 world_size = torch.cuda.device_count()
-torch.distributed.init_process_group('nccl', rank=0, world_size=world_size)
+torch.distributed.init_process_group(backend='nccl')
 
 def train(t = 5, p='Math'):
 
