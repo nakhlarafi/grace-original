@@ -21,7 +21,7 @@ for i in tqdm(range(int(len(lst) / totalnum) + 1)):
         print("CUDA_VISIBLE_DEVICES="+str(card[cardn]))
         # p = subprocess.Popen("CUDA_VISIBLE_DEVICES=1,2,3" + " python run.py %d %s %f %d %d"%(lst[totalnum * i + j], project, lr, seed, batch_size), shell=True)
         # p = subprocess.Popen("CUDA_VISIBLE_DEVICES=" + " torchrun --nnodes=2 --nproc_per_node=2 --rdzv_id=100 --rdzv_backend=c10d --rdzv_endpoint=$MASTER_ADDR:quail:127.0.1.1:29400 run.py %d %s %f %d %d"%(lst[totalnum * i + j], project, lr, seed, batch_size), shell=True)
-        p = subprocess.Popen("CUDA_VISIBLE_DEVICES=0,3" + " torchrun --nnodes=1 --nproc_per_node=3 --rdzv_id=100 --rdzv_backend=c10d --rdzv_endpoint=virya4:29407 run.py %d %s %f %d %d"%(lst[totalnum * i + j], project, lr, seed, batch_size), shell=True)
+        p = subprocess.Popen("CUDA_VISIBLE_DEVICES=1,2,3" + " torchrun --nnodes=1 --nproc_per_node=3 --rdzv_id=100 --rdzv_backend=c10d --rdzv_endpoint=virya4:29407 run.py %d %s %f %d %d"%(lst[totalnum * i + j], project, lr, seed, batch_size), shell=True)
 
         jobs.append(p)
         time.sleep(10)
