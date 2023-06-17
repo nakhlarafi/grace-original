@@ -96,7 +96,7 @@ def train(t = 5, p='Math'):
     if use_cuda:
         print('using GPU')
         dist.init_process_group("nccl")
-        rank = 3
+        rank = dist.get_rank()
         # create model and move it to GPU with id rank
         device_id = rank % torch.cuda.device_count()
         model = model().to(device_id)
