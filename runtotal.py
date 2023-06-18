@@ -3,6 +3,7 @@ from tqdm import tqdm
 import time
 import os, sys
 import pickle
+import pdb
 project = sys.argv[1]
 card = [1,2,3]
 lst = list(range(len(pickle.load(open(project + '.pkl', 'rb')))))
@@ -12,6 +13,9 @@ totalnum = len(card) * singlenum
 lr = 1e-2
 seed = 0
 batch_size = 60
+print('lst------------- ', lst)
+print('times',int(len(lst) / totalnum) + 1)
+pdb.set_trace()
 for i in tqdm(range(int(len(lst) / totalnum) + 1)):
     jobs = []
     for j in range(totalnum):
