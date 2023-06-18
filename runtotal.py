@@ -15,7 +15,7 @@ seed = 0
 batch_size = 60
 print('lst------------- ', lst)
 print('times',int(len(lst) / totalnum) + 1)
-pdb.set_trace()
+# pdb.set_trace()
 for i in tqdm(range(int(len(lst) / totalnum) + 1)):
     jobs = []
     for j in range(totalnum):
