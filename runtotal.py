@@ -4,6 +4,8 @@ import time
 import os, sys
 import pickle
 import pdb
+import os
+os.environ["CUDA_VISIBLE_DEVICES"] = "0,1,2"
 project = sys.argv[1]
 card = [0]
 lst = list(range(len(pickle.load(open(project + '.pkl', 'rb')))))
@@ -18,14 +20,14 @@ print('times',int(len(lst) / totalnum) + 1)
 # pdb.set_trace()
 for i in tqdm(range(int(len(lst) / totalnum) + 1)):
     jobs = []
-    for j in range(totalnum):
+    for j in range(1):
         if totalnum * i + j >= len(lst):
             continue
         cardn =int(j / singlenum)
         print("CUDA_VISIBLE_DEVICES="+str(card[cardn]))
         # p = subprocess.Popen("CUDA_VISIBLE_DEVICES=1,2,3" + " python run.py %d %s %f %d %d"%(lst[totalnum * i + j], project, lr, seed, batch_size), shell=True)
         # p = subprocess.Popen("CUDA_VISIBLE_DEVICES=" + " torchrun --nnodes=2 --nproc_per_node=2 --rdzv_id=100 --rdzv_backend=c10d --rdzv_endpoint=$MASTER_ADDR:quail:127.0.1.1:29400 run.py %d %s %f %d %d"%(lst[totalnum * i + j], project, lr, seed, batch_size), shell=True)
-        p = subprocess.Popen("CUDA_VISIBLE_DEVICES=0,1,2" + " torchrun --nnodes=1 --nproc_per_node=1 --rdzv_id=100 --rdzv_backend=c10d --rdzv_endpoint=virya4:29407 run.py %d %s %f %d %d"%(lst[totalnum * i + j], project, lr, seed, batch_size), shell=True)
+        p = subprocess.Popen("torchrun --nnodes=1 --nproc_per_node=1 --rdzv_id=100 --rdzv_backend=c10d --rdzv_endpoint=virya4:29407 run.py %d %s %f %d %d"%(lst[totalnum * i + j], project, lr, seed, batch_size), shell=True)
 
         jobs.append(p)
         time.sleep(10)
