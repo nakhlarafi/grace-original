@@ -103,7 +103,7 @@ def train(t = 5, p='Math'):
 
     
     dist.init_process_group("nccl")
-    rank = dist.get_rank()
+    rank = dist.get_rank()+1
     print('-------------',rank)
     print(f"Start running basic DDP example on rank {rank}.")
     model = NlEncoder(args)
