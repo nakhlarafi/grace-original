@@ -1,4 +1,5 @@
 import torch
+import torch.nn as nn
 from torch import optim
 from Dataset import SumDataset
 import os
@@ -85,10 +86,12 @@ def train(t = 5, p='Math'):
     args.Vocsize = len(train_set.Char_Voc)
 
     print(dev_set.ids)
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     model = NlEncoder(args)
-    if use_cuda:
-        print('using GPU')
-        model = model.cuda()
+    if torch.cuda.device_count() > 1:
+        print("Let's use", torch.cuda.device_count(), "GPUs!")
+        model = nn.DataParallel(model)
+    model.to(device)
     maxl = 1e9
     optimizer = ScheduledOptim(optim.Adam(model.parameters(), lr=args.lr), args.embedding_size, 4000)
     maxAcc = 0
