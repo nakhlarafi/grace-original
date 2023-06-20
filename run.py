@@ -14,6 +14,9 @@ from nltk.translate.bleu_score import corpus_bleu
 import pandas as pd
 import random
 import sys
+import torch.distributed as dist
+from torch.nn.parallel import DistributedDataParallel as DDP
+
 #import wandb
 #wandb.init(project="codesum")
 class dotdict(dict):
@@ -86,12 +89,18 @@ def train(t = 5, p='Math'):
     args.Vocsize = len(train_set.Char_Voc)
 
     print(dev_set.ids)
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     model = NlEncoder(args)
-    if torch.cuda.device_count() > 1:
-        print("Let's use", torch.cuda.device_count(), "GPUs!")
-        model = nn.DataParallel(model)
-    model.to(device)
+    
+    dist.init_process_group("nccl")
+    rank = dist.get_rank()
+    print(f"Start running basic DDP example on rank {rank}.")
+
+    # create model and move it to GPU with id rank
+    device_id = rank % torch.cuda.device_count()
+    model = model().to(device_id)
+    model = DDP(model, device_ids=[device_id])
+
+
     maxl = 1e9
     optimizer = ScheduledOptim(optim.Adam(model.parameters(), lr=args.lr), args.embedding_size, 4000)
     maxAcc = 0
