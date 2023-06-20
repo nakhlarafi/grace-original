@@ -5,7 +5,7 @@ import os, sys
 import pickle
 
 project = sys.argv[1]
-card = [0,1,2]
+card = [0]
 lst = list(range(len(pickle.load(open(project + '.pkl', 'rb')))))
 singlenums = {'Time':5, 'Math':2, "Lang":10, "Chart":3, "Mockito":4, "Closure":1}
 singlenum = singlenums[project]
@@ -25,4 +25,4 @@ for i in tqdm(range(int(len(lst) / totalnum) + 1)):
 p = subprocess.Popen("python3 sum.py %s %d %f %d"%(project, seed, lr, batch_size), shell=True)
 p.wait()
 
-subprocess.Popen("python3 watch.py %s %d %f %d"%(project, seed, lr, batch_size),shell=True)   
+subprocess.Popen("python3 watch.py %s %d %f %d"%(project, seed, lr, batch_size),shell=True)            
