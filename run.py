@@ -156,6 +156,7 @@ def train(t = 5, p='Math'):
 
             optimizer.step_and_update_lr()
             index += 1
+    torch.cuda.empty_cache()
     return brest, bans, batchn, each_epoch_pred
 
 
