@@ -4,9 +4,9 @@ import time
 import os, sys
 import pickle
 project = sys.argv[1]
-card = [0]
+card = [0,1,2]
 lst = list(range(len(pickle.load(open(project + '.pkl', 'rb')))))
-singlenums = {'Time':5, 'Math':2, "Lang":10, "Chart":3, "Mockito":1, "Closure":1}
+singlenums = {'Time':1, 'Math':2, "Lang":10, "Chart":3, "Mockito":1, "Closure":1}
 singlenum = singlenums[project]
 totalnum = len(card) * singlenum
 lr = 1e-2
@@ -18,6 +18,7 @@ for i in tqdm(range(int(len(lst) / totalnum) + 1)):
         if totalnum * i + j >= len(lst):
             continue
         cardn =int(j / singlenum)
+        print("Running on GPU no. ="+str(card[cardn]))
         p = subprocess.Popen("CUDA_VISIBLE_DEVICES="+str(card[cardn]) + " python3 run.py %d %s %f %d %d"%(lst[totalnum * i + j], project, lr, seed, batch_size), shell=True)
         p.wait()
 
