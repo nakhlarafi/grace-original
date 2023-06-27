@@ -160,7 +160,7 @@ def train(t = 5, p='Math'):
             scaler.scale(loss).backward()
             scaler.step(optimizer)
             scaler.update()
-            # optimizer.step_and_update_lr()
+            optimizer.step_and_update_lr()
             index += 1
     return brest, bans, batchn, each_epoch_pred
 
