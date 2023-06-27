@@ -91,7 +91,6 @@ def train(t = 5, p='Math'):
         print('using GPU')
         model = model.cuda()
     maxl = 1e9
-    scaler = GradScaler()
     optimizer = ScheduledOptim(optim.Adam(model.parameters(), lr=args.lr), args.embedding_size, 4000)
     maxAcc = 0
     minloss = 1e9
@@ -150,19 +149,13 @@ def train(t = 5, p='Math'):
                 model = model.train()
             for i in range(len(dBatch)):
                 dBatch[i] = gVar(dBatch[i])
-            with autocast():
-                loss, _, _ = model(dBatch[0], dBatch[1], dBatch[2], dBatch[3], dBatch[4], dBatch[5], dBatch[6], dBatch[7])
-                loss = loss.mean()
+            loss, _, _ = model(dBatch[0], dBatch[1], dBatch[2], dBatch[3], dBatch[4], dBatch[5], dBatch[6], dBatch[7])
             print(loss.mean().item())
             optimizer.zero_grad()
-            # use the GradScaler to scale the loss and perform the backward pass in a scaled context.
-            scaler.scale(loss).backward()
-            # scaler.step() first unscales the gradients of the optimizer's assigned params.
-            # If these gradients do not contain infs or NaNs, optimizer.step() is then called,
-            # otherwise, optimizer.step() is skipped.
-            scaler.step(optimizer)
-            # Updates the scale for next iteration.
-            scaler.update()
+            loss = loss.mean()
+            loss.backward()
+
+            optimizer.step_and_update_lr()
             index += 1
     return brest, bans, batchn, each_epoch_pred
 
