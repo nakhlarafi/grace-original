@@ -10,6 +10,7 @@ from nltk import word_tokenize
 import pickle
 from ScheduledOptim import ScheduledOptim
 from nltk.translate.bleu_score import corpus_bleu
+from torch.cuda.amp import autocast, GradScaler
 import pandas as pd
 import random
 import sys
@@ -26,14 +27,14 @@ args = dotdict({
     'CodeLen':CodeLen_map[sys.argv[2]],
     'SentenceLen':10,
     'batch_size':60,
-    'embedding_size':16,
+    'embedding_size':32,
     'WoLen':15,
-    'Vocsize':50,
-    'Nl_Vocsize':50,
+    'Vocsize':100,
+    'Nl_Vocsize':100,
     'max_step':3,
     'margin':0.5,
     'poolsize':50,
-    'Code_Vocsize':50,
+    'Code_Vocsize':100,
     'seed':0,
     'lr':1e-3
 })
@@ -90,6 +91,7 @@ def train(t = 5, p='Math'):
         print('using GPU')
         model = model.cuda()
     maxl = 1e9
+    scaler = GradScaler()
     optimizer = ScheduledOptim(optim.Adam(model.parameters(), lr=args.lr), args.embedding_size, 4000)
     maxAcc = 0
     minloss = 1e9
@@ -148,13 +150,19 @@ def train(t = 5, p='Math'):
                 model = model.train()
             for i in range(len(dBatch)):
                 dBatch[i] = gVar(dBatch[i])
-            loss, _, _ = model(dBatch[0], dBatch[1], dBatch[2], dBatch[3], dBatch[4], dBatch[5], dBatch[6], dBatch[7])
+            with autocast():
+                loss, _, _ = model(dBatch[0], dBatch[1], dBatch[2], dBatch[3], dBatch[4], dBatch[5], dBatch[6], dBatch[7])
+                loss = loss.mean()
             print(loss.mean().item())
             optimizer.zero_grad()
-            loss = loss.mean()
-            loss.backward()
-
-            optimizer.step_and_update_lr()
+            # use the GradScaler to scale the loss and perform the backward pass in a scaled context.
+            scaler.scale(loss).backward()
+            # scaler.step() first unscales the gradients of the optimizer's assigned params.
+            # If these gradients do not contain infs or NaNs, optimizer.step() is then called,
+            # otherwise, optimizer.step() is skipped.
+            scaler.step(optimizer)
+            # Updates the scale for next iteration.
+            scaler.update()
             index += 1
     return brest, bans, batchn, each_epoch_pred
 
