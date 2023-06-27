@@ -28,12 +28,12 @@ args = dotdict({
     'batch_size':60,
     'embedding_size':16,
     'WoLen':15,
-    'Vocsize':100,
-    'Nl_Vocsize':100,
+    'Vocsize':50,
+    'Nl_Vocsize':50,
     'max_step':3,
     'margin':0.5,
     'poolsize':50,
-    'Code_Vocsize':100,
+    'Code_Vocsize':50,
     'seed':0,
     'lr':1e-3
 })
