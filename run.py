@@ -10,7 +10,6 @@ from nltk import word_tokenize
 import pickle
 from ScheduledOptim import ScheduledOptim
 from nltk.translate.bleu_score import corpus_bleu
-from torch.cuda.amp import autocast, GradScaler
 import pandas as pd
 import random
 import sys
@@ -91,8 +90,6 @@ def train(t = 5, p='Math'):
         print('using GPU')
         model = model.cuda()
     maxl = 1e9
-    scaler = GradScaler()
-
     optimizer = ScheduledOptim(optim.Adam(model.parameters(), lr=args.lr), args.embedding_size, 4000)
     maxAcc = 0
     minloss = 1e9
@@ -151,15 +148,12 @@ def train(t = 5, p='Math'):
                 model = model.train()
             for i in range(len(dBatch)):
                 dBatch[i] = gVar(dBatch[i])
-            with autocast():
-                loss, _, _ = model(dBatch[0], dBatch[1], dBatch[2], dBatch[3], dBatch[4], dBatch[5], dBatch[6], dBatch[7])
-                loss = loss.mean()
+            loss, _, _ = model(dBatch[0], dBatch[1], dBatch[2], dBatch[3], dBatch[4], dBatch[5], dBatch[6], dBatch[7])
+            print(loss.mean().item())
             optimizer.zero_grad()
             loss = loss.mean()
             loss.backward()
-            scaler.scale(loss).backward()
-            scaler.step(optimizer)
-            scaler.update()
+
             optimizer.step_and_update_lr()
             index += 1
     return brest, bans, batchn, each_epoch_pred
