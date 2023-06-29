@@ -47,6 +47,7 @@ class NlEncoder( nn.Module ):
         # print(lineem.shape)
         x = torch.cat( [x, lineem], dim=1 )
         for trans in self.transformerBlocks:
+            print(trans)
             x = trans.forward( x, nlmask, inputad )
         x = x[:, :input_node.size( 1 )]
         resSoftmax = F.softmax( self.resLinear2( x ).squeeze( -1 ).masked_fill( resmask == 0, -1e9 ), dim=-1 )
