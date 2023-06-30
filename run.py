@@ -19,7 +19,7 @@ class dotdict(dict):
     def __getattr__(self, name):
         return self[name]
 
-NlLen_map = {"Time":500, "Math":4500, "Lang":280, "Chart": 2350, "Mockito":1780, "unknown":2200}
+NlLen_map = {"Time":3900, "Math":4500, "Lang":280, "Chart": 2350, "Mockito":1780, "unknown":2200}
 CodeLen_map = {"Time":1300, "Math":2700, "Lang":300, "Chart":5250, "Mockito":1176, "unknown":2800}
 args = dotdict({
     'NlLen':NlLen_map[sys.argv[2]],
@@ -72,7 +72,7 @@ def train(t = 5, p='Math'):
     torch.cuda.manual_seed(args.seed)
     torch.cuda.manual_seed_all(args.seed) 
 
-    torch.backends.cudnn.benchmark = False
+    torch.backends.cudnn.benchmark = True
     torch.backends.cudnn.deterministic = True
     dev_set = SumDataset(args, "test", p, testid=t)
     val_set = SumDataset(args, "val", p, testid=t)
