@@ -212,13 +212,14 @@ class SumDataset(data.Dataset):
             textb = []
             linenodes = []
             linetypes = []
+            mus = []
             methodnum = len(x['methods'])
             rrdict = {}
             for s in x['methods']:
                 rrdict[x['methods'][s]] = s[:s.index('(')]
             for i in range(methodnum):
                 nodes.append('Method')
-                linetypes.append(x['modification'][i])
+                mus.append(x['modification'][i])
                 if len(rrdict[i].split(":")) > 1:
                     tokens = ".".join(rrdict[i].split(":")[0].split('.')[-2:] + [rrdict[i].split(":")[1]]) 
                 else:
@@ -255,17 +256,17 @@ class SumDataset(data.Dataset):
             #     nodes.append('RTest')
             #     types.append(0)
 
-            mus = []
+            
             for i in range(len(x['lines'])):
                 if i not in x['ltype']:
                     x['ltype'][i] = 'Empty'
                 if x['ltype'][i] not in self.Nl_Voc:
                     self.Nl_Voc[x['ltype'][i]] = len(self.Nl_Voc)
                 linenodes.append(x['ltype'][i])
-                # if i in x['lcorrectnum']:
-                #     linetypes.append(x['lcorrectnum'][i])
-                # else:
-                #     linetypes.append(1)
+                if i in x['lcorrectnum']:
+                    linetypes.append(x['lcorrectnum'][i])
+                else:
+                    linetypes.append(1)
             maxl = max(maxl, len(nodes))
             maxl2 = max(maxl2, len(linenodes))
             ed = {}
@@ -337,7 +338,7 @@ class SumDataset(data.Dataset):
             Nodes.append(self.pad_seq(self.Get_Em(nodes, self.Nl_Voc), self.Nl_Len))
             Types.append(self.pad_seq(types, self.Nl_Len))
             Res.append(self.pad_seq(res, self.Nl_Len))
-            LineMus.append(self.pad_list(mus, self.Code_Len, 3))
+            LineMus.append(self.pad_seq(mus, self.Code_Len, 3))
             inputText.append(self.pad_seq(overlap, self.Nl_Len))
             LineNodes.append(self.pad_seq(self.Get_Em(linenodes, self.Nl_Voc), self.Code_Len))
             LineTypes.append(self.pad_seq(linetypes, self.Code_Len))
