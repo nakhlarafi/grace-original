@@ -48,7 +48,7 @@ class SumDataset(data.Dataset):
             self.Load_Voc()
         else:
             self.init_dic()
-        print(self.Nl_Voc)
+        # print(self.Nl_Voc)
         if not os.path.exists(self.proj + 'data.pkl'):
             data = self.preProcessData(open(self.train_path, "rb"))
         else:
@@ -108,7 +108,7 @@ class SumDataset(data.Dataset):
         ans.append(tmp)
         return ans
     def init_dic(self):
-        print("initVoc")
+        # print("initVoc")
         f = open(self.p + '.pkl', 'rb')
         data = pickle.load(f)
         maxNlLen = 0
@@ -124,7 +124,7 @@ class SumDataset(data.Dataset):
                 else:
                     tokens = ".".join(s.split(":")[0].split('.')[-2:])
                 Codes.append(self.splitCamel(tokens))
-                print(Codes[-1])
+                # print(Codes[-1])
             for s in x['ftest']:
                 if len(s.split(":")) > 1:
                     tokens = ".".join(s.split(":")[0].split('.')[-2:] + [s.split(":")[1]])
@@ -279,12 +279,12 @@ class SumDataset(data.Dataset):
                 if (a, b) not in ed:
                     ed[(a, b)] = 1
                 else:
-                    print(a, b)
+                    # print(a, b)
                     assert(0)
                 if (b, a) not in ed:
                     ed[(b, a)] = 1
                 else:
-                    print(a, b)
+                    # print(a, b)
                     assert(0)
                 nladrow.append(a)
                 nladcol.append(b)
@@ -321,13 +321,13 @@ class SumDataset(data.Dataset):
                 if (a, b) not in ed:
                     ed[(a, b)] = 1
                 else:
-                    print(e[0])
-                    print(a, b)
+                    # print(e[0])
+                    # print(a, b)
                     assert(0)
                 if (b, a) not in ed:
                     ed[(b, a)] = 1
                 else:
-                    print(a, b)
+                    # print(a, b)
                     assert(0)
                 nladval.append(1)
                 nladrow.append(b)
@@ -355,9 +355,9 @@ class SumDataset(data.Dataset):
                 nladval[i] = 1 / math.sqrt(row[nladrow[i]]) * 1 / math.sqrt(col[nladcol[i]])
             nlad = sparse.coo_matrix((nladval, (nladrow, nladcol)), shape=(self.Nl_Len + self.Code_Len, self.Nl_Len + self.Code_Len))
             inputNlad.append(nlad)
-        print("max1: %d max2: %d"%(maxl, maxl2))
-        print("correct: %d error: %d"%(correct, error))
-        print("error1: %d error2: %d"%(error1, error2))
+        # print("max1: %d max2: %d"%(maxl, maxl2))
+        # print("correct: %d error: %d"%(correct, error))
+        # print("error1: %d error2: %d"%(error1, error2))
 
         batchs = [Nodes, Types, inputNlad, Res, inputText, LineNodes, LineTypes, LineMus]
         self.data = batchs

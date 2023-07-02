@@ -133,7 +133,7 @@ def train(t = 5, p='Math'):
 
                 each_epoch_pred[epoch] = lst
                 score = score2[0]
-                print('curr accuracy is ' + str(score) + "," + str(score2))
+                # print('curr accuracy is ' + str(score) + "," + str(score2))
                 if score2[0] == 0:
                     batchn.append(epoch)
                     
@@ -142,14 +142,14 @@ def train(t = 5, p='Math'):
                     brest = score2
                     bans = lst
                     maxl = score
-                    print("find better score " + str(score) + "," + str(score2))
+                    # print("find better score " + str(score) + "," + str(score2))
                     #save_model(model)
                     #torch.save(model.state_dict(), os.path.join(wandb.run.dir, 'model.pt'))
                 model = model.train()
             for i in range(len(dBatch)):
                 dBatch[i] = gVar(dBatch[i])
             loss, _, _ = model(dBatch[0], dBatch[1], dBatch[2], dBatch[3], dBatch[4], dBatch[5], dBatch[6], dBatch[7])
-            print(loss.mean().item())
+            # print(loss.mean().item())
             optimizer.zero_grad()
             loss = loss.mean()
             loss.backward()

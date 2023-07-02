@@ -20,4 +20,4 @@ for i in range(0, versionNum[proj]):
 
     
 open(proj + 'res_%d_%s_%s.pkl'%(seed,lr, batch_size), 'wb').write(pickle.dumps(t))
-print(len(t))
+# print(len(t))

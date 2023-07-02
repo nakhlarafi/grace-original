@@ -18,7 +18,7 @@ class NlEncoder( nn.Module ):
         self.feed_forward_hidden = 4 * self.embedding_size
         self.conv = nn.Conv2d( self.embedding_size, self.embedding_size, (1, self.word_len) )
         self.transformerBlocks = nn.ModuleList(
-            [TransformerBlock( self.embedding_size, 4, self.feed_forward_hidden, 0.1 ) for _ in range(3)] )
+            [TransformerBlock( self.embedding_size, 2, self.feed_forward_hidden, 0.1 ) for _ in range(3)] )
         self.token_embedding = nn.Embedding( args.Nl_Vocsize, self.embedding_size - 1 )
         self.token_embedding1 = nn.Embedding( args.Nl_Vocsize, self.embedding_size - 1 )
 
@@ -49,7 +49,7 @@ class NlEncoder( nn.Module ):
         check = 0
         for trans in self.transformerBlocks:
             check+=1
-            print(check)
+            # print(check)
             x = trans.forward( x, nlmask, inputad )
         x = x[:, :input_node.size( 1 )]
         resSoftmax = F.softmax( self.resLinear2( x ).squeeze( -1 ).masked_fill( resmask == 0, -1e9 ), dim=-1 )
