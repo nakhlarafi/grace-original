@@ -72,7 +72,7 @@ def train(t = 5, p='Math'):
     torch.cuda.manual_seed(args.seed)
     torch.cuda.manual_seed_all(args.seed) 
 
-    torch.backends.cudnn.benchmark = True
+    torch.backends.cudnn.benchmark = False
     torch.backends.cudnn.deterministic = True
     dev_set = SumDataset(args, "test", p, testid=t)
     val_set = SumDataset(args, "val", p, testid=t)
@@ -84,7 +84,7 @@ def train(t = 5, p='Math'):
     args.Nl_Vocsize = len(train_set.Nl_Voc)
     args.Vocsize = len(train_set.Char_Voc)
 
-    print(dev_set.ids)
+    # print(dev_set.ids)
     model = NlEncoder(args)
     if use_cuda:
         print('using GPU')
