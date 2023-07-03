@@ -134,6 +134,15 @@ class SumDataset(data.Dataset):
         code_voc = VocabEntry.from_corpus(Codes, size=50000, freq_cutoff = 0)
         self.Code_Voc = code_voc.word2id
         open("code_voc.pkl", "wb").write(pickle.dumps(self.Code_Voc))
+
+    def normalize(self, lst):
+        min_val = min(lst)
+        max_val = max(lst)
+        if max_val != min_val:
+            return [(x - min_val) / (max_val - min_val) for x in lst]
+        else:
+            return [1 for _ in lst]
+    
     def Get_Em(self, WordList, voc):
         ans = []
         for x in WordList:
@@ -334,7 +343,7 @@ class SumDataset(data.Dataset):
                 nladcol.append(a)
                 nladval.append(1)
             overlap = self.getoverlap(texta, textb)
-
+            mus = self.normalize(mus)
             Nodes.append(self.pad_seq(self.Get_Em(nodes, self.Nl_Voc), self.Nl_Len))
             Types.append(self.pad_seq(types, self.Nl_Len))
             Res.append(self.pad_seq(res, self.Nl_Len))
