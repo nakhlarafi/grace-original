@@ -343,7 +343,7 @@ class SumDataset(data.Dataset):
                 nladcol.append(a)
                 nladval.append(1)
             overlap = self.getoverlap(texta, textb)
-            mus = self.normalize(mus)
+            # mus = self.normalize(mus)
             Nodes.append(self.pad_seq(self.Get_Em(nodes, self.Nl_Voc), self.Nl_Len))
             Types.append(self.pad_seq(types, self.Nl_Len))
             Res.append(self.pad_seq(res, self.Nl_Len))
