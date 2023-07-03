@@ -19,8 +19,8 @@ class NlEncoder( nn.Module ):
         self.conv = nn.Conv2d( self.embedding_size, self.embedding_size, (1, self.word_len) )
         self.transformerBlocks = nn.ModuleList(
             [TransformerBlock( self.embedding_size, 2, self.feed_forward_hidden, 0.1 ) for _ in range(5)] )
-        self.token_embedding = nn.Embedding( args.Nl_Vocsize, self.embedding_size - 1 )
-        self.token_embedding1 = nn.Embedding( args.Nl_Vocsize, self.embedding_size - 1 )
+        self.token_embedding = nn.Embedding( args.Nl_Vocsize, self.embedding_size - 2 )
+        self.token_embedding1 = nn.Embedding( args.Nl_Vocsize, self.embedding_size  )
 
         self.text_embedding = nn.Embedding( 20, self.embedding_size )
         
@@ -38,13 +38,31 @@ class NlEncoder( nn.Module ):
         resmask = torch.eq( input_node, 2 )
         inputad = inputad.float()
         nodeem = self.token_embedding( input_node )
-        nodeem = torch.cat( [nodeem, inputtext.unsqueeze( -1 ).float()], dim=-1 )
+        nodeem = torch.cat([nodeem, inputtext.unsqueeze(-1).float()], dim=-1)
         x = nodeem
+        # nodeem = torch.cat( [nodeem, inputtext.unsqueeze( -1 ).float()], dim=-1 )
+        # x = nodeem
+        padding_size = x.shape[1] - linemus.shape[1]
         lineem = self.token_embedding1( linenode )
-        #lineem = torch.cat( [lineem, linetype.float()], dim=-1 )
         lineem = torch.cat([lineem, linemus.unsqueeze(-1).float()], dim=-1)
-        # print(x.shape)
-        # print(lineem.shape)
+
+        padded_linemus = F.pad(linetype, (0, padding_size)).unsqueeze(-1).float()
+
+        # Calculate the padding size
+
+        # Pad the linemus tensor with zeros along the last dimension
+        #padded_linemus = F.pad(linemus, (0, padding_size)).unsqueeze(-1).float()
+
+        # Concatenate the tensors
+        #x = torch.cat([x, padded_linemus], dim=-1)
+
+        # Line Type Add
+        x = torch.cat([x, padded_linemus], dim=-1)
+        
+        #x = torch.cat([x, linemus.unsqueeze(-1).float()], dim=-1)
+        # lineem = self.token_embedding1(linenode)
+
+        
         x = torch.cat( [x, lineem], dim=1 )
         check = 0
         for trans in self.transformerBlocks:
