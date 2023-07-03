@@ -40,30 +40,24 @@ class NlEncoder( nn.Module ):
         nodeem = self.token_embedding( input_node )
         nodeem = torch.cat([nodeem, inputtext.unsqueeze(-1).float()], dim=-1)
         x = nodeem
+        lineem = self.token_embedding1(linenode)
+        lineem = torch.cat( [lineem, linemus.unsqueeze(-1).float()], dim=-1 )
+        x = torch.cat( [x, lineem], dim=1 )
+
+
         # nodeem = torch.cat( [nodeem, inputtext.unsqueeze( -1 ).float()], dim=-1 )
         # x = nodeem
-        padding_size = x.shape[1] - linemus.shape[1]
-        padded_linemus = F.pad(linetype, (0, padding_size)).unsqueeze(-1).float()
-        x = torch.cat([x, padded_linemus], dim=-1)
-        lineem = self.token_embedding1( linenode )
-        x = torch.cat([x, lineem], dim=1)
-
-
-        # Calculate the padding size
-
-        # Pad the linemus tensor with zeros along the last dimension
-        #padded_linemus = F.pad(linemus, (0, padding_size)).unsqueeze(-1).float()
-
-        # Concatenate the tensors
-        #x = torch.cat([x, padded_linemus], dim=-1)
-
-        # Line Type Add
-        
-        #x = torch.cat([x, linemus.unsqueeze(-1).float()], dim=-1)
-        # lineem = self.token_embedding1(linenode)
+        #--------------------------------------------
+        # padding_size = x.shape[1] - linemus.shape[1]
+        # padded_linemus = F.pad(linetype, (0, padding_size)).unsqueeze(-1).float()
+        # x = torch.cat([x, padded_linemus], dim=-1)
+        # lineem = self.token_embedding1( linenode )
+        # x = torch.cat([x, lineem], dim=1)
+        # x = torch.cat([x, linemus.unsqueeze(-1).float()], dim=-1)
+        #--------------------------------------------
 
         
-        # x = torch.cat( [x, lineem], dim=1 )
+        
         check = 0
         for trans in self.transformerBlocks:
             check+=1
