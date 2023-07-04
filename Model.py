@@ -18,10 +18,9 @@ class NlEncoder( nn.Module ):
         self.feed_forward_hidden = 4 * self.embedding_size
         self.conv = nn.Conv2d( self.embedding_size, self.embedding_size, (1, self.word_len) )
         self.transformerBlocks = nn.ModuleList(
-            [TransformerBlock( self.embedding_size, 2, self.feed_forward_hidden, 0.1 ) for _ in range(3)] )
+            [TransformerBlock( self.embedding_size, 2, self.feed_forward_hidden, 0.1 ) for _ in range(5)] )
         self.token_embedding = nn.Embedding( args.Nl_Vocsize, self.embedding_size - 1 )
         self.token_embedding1 = nn.Embedding( args.Nl_Vocsize, self.embedding_size - 1 )
-        self.linetype_embedding = nn.Embedding( args.Nl_Vocsize, self.embedding_size - 1)
 
         self.text_embedding = nn.Embedding( 20, self.embedding_size )
         
@@ -35,68 +34,23 @@ class NlEncoder( nn.Module ):
         self.resLinear2 = nn.Linear( self.embedding_size, 1 )
 
     def forward(self, input_node, inputtype, inputad, res, inputtext, linenode, linetype, linemus):
-        # nlmask = torch.gt( input_node, 0 )
-        # resmask = torch.eq( input_node, 2 )
-        # inputad = inputad.float()
-        # nodeem = self.token_embedding( input_node )
-        # nodeem = torch.cat([nodeem, inputtext.unsqueeze(-1).float()], dim=-1)
-        # x = nodeem
-        # lineem = self.token_embedding1(linenode)
-        # lineem = torch.cat( [lineem, linemus.unsqueeze(-1).float()], dim=-1 )
-        # x = torch.cat( [x, lineem], dim=1 )
-
-
-        # # nodeem = torch.cat( [nodeem, inputtext.unsqueeze( -1 ).float()], dim=-1 )
-        # # x = nodeem
-        # #--------------------------------------------
-        # # padding_size = x.shape[1] - linemus.shape[1]
-        # # padded_linemus = F.pad(linetype, (0, padding_size)).unsqueeze(-1).float()
-        # # x = torch.cat([x, padded_linemus], dim=-1)
-        # # lineem = self.token_embedding1( linenode )
-        # # x = torch.cat([x, lineem], dim=1)
-        # # x = torch.cat([x, linemus.unsqueeze(-1).float()], dim=-1)
-        # #--------------------------------------------
-
-        
-        
-        # check = 0
-        # for trans in self.transformerBlocks:
-        #     check+=1
-        #     # print(check)
-        #     x = trans.forward( x, nlmask, inputad )
-        # x = x[:, :input_node.size( 1 )]
-        # resSoftmax = F.softmax( self.resLinear2( x ).squeeze( -1 ).masked_fill( resmask == 0, -1e9 ), dim=-1 )
-        # loss = -torch.log( resSoftmax.clamp( min=1e-10, max=1 ) ) * res
-        # loss = loss.sum( dim=-1 )
-
-        
         nlmask = torch.gt( input_node, 0 )
         resmask = torch.eq( input_node, 2 )
         inputad = inputad.float()
-        
-        nodeem = self.token_embedding( input_node )
-        nodeem = torch.cat([nodeem, inputtext.unsqueeze(-1).float()], dim=-1)
-        
-        x = nodeem
-        lineem = self.token_embedding1(linenode)
-
-        # Normalize the counts to between 0 and 1
         linemus_norm = linemus.float() / torch.max(linemus)
-        linetype_norm = linetype.float() / torch.max(linetype)
-
-        # Expand dimensions to match with lineem
-        linemus_exp = linemus_norm.unsqueeze(-1).expand_as(lineem)
-        linetype_exp = linetype_norm.unsqueeze(-1).expand_as(lineem)
-        
-        lineem = torch.cat( [lineem, linemus_exp, linetype_exp], dim=-1 )
+        nodeem = self.token_embedding( input_node )
+        nodeem = torch.cat( [nodeem, inputtext.unsqueeze( -1 ).float()], dim=-1 )
+        x = nodeem
+        lineem = self.token_embedding1( linenode )
+        lineem = torch.cat([lineem, linemus_norm.unsqueeze(-1).float()], dim=-1)
         
         x = torch.cat( [x, lineem], dim=1 )
-            
+        check = 0
         for trans in self.transformerBlocks:
+            check+=1
+            # print(check)
             x = trans.forward( x, nlmask, inputad )
-            
         x = x[:, :input_node.size( 1 )]
-        
         resSoftmax = F.softmax( self.resLinear2( x ).squeeze( -1 ).masked_fill( resmask == 0, -1e9 ), dim=-1 )
         loss = -torch.log( resSoftmax.clamp( min=1e-10, max=1 ) ) * res
         loss = loss.sum( dim=-1 )
