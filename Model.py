@@ -34,38 +34,61 @@ class NlEncoder( nn.Module ):
         self.resLinear2 = nn.Linear( self.embedding_size, 1 )
 
     def forward(self, input_node, inputtype, inputad, res, inputtext, linenode, linetype, linemus):
+        # nlmask = torch.gt( input_node, 0 )
+        # resmask = torch.eq( input_node, 2 )
+        # inputad = inputad.float()
+        # nodeem = self.token_embedding( input_node )
+        # nodeem = torch.cat([nodeem, inputtext.unsqueeze(-1).float()], dim=-1)
+        # x = nodeem
+        # lineem = self.token_embedding1(linenode)
+        # lineem = torch.cat( [lineem, linemus.unsqueeze(-1).float()], dim=-1 )
+        # x = torch.cat( [x, lineem], dim=1 )
+
+
+        # # nodeem = torch.cat( [nodeem, inputtext.unsqueeze( -1 ).float()], dim=-1 )
+        # # x = nodeem
+        # #--------------------------------------------
+        # # padding_size = x.shape[1] - linemus.shape[1]
+        # # padded_linemus = F.pad(linetype, (0, padding_size)).unsqueeze(-1).float()
+        # # x = torch.cat([x, padded_linemus], dim=-1)
+        # # lineem = self.token_embedding1( linenode )
+        # # x = torch.cat([x, lineem], dim=1)
+        # # x = torch.cat([x, linemus.unsqueeze(-1).float()], dim=-1)
+        # #--------------------------------------------
+
+        
+        
+        # check = 0
+        # for trans in self.transformerBlocks:
+        #     check+=1
+        #     # print(check)
+        #     x = trans.forward( x, nlmask, inputad )
+        # x = x[:, :input_node.size( 1 )]
+        # resSoftmax = F.softmax( self.resLinear2( x ).squeeze( -1 ).masked_fill( resmask == 0, -1e9 ), dim=-1 )
+        # loss = -torch.log( resSoftmax.clamp( min=1e-10, max=1 ) ) * res
+        # loss = loss.sum( dim=-1 )
+
         nlmask = torch.gt( input_node, 0 )
         resmask = torch.eq( input_node, 2 )
         inputad = inputad.float()
+        
         nodeem = self.token_embedding( input_node )
         nodeem = torch.cat([nodeem, inputtext.unsqueeze(-1).float()], dim=-1)
+        
+        # Embed linetype
+        linetype_em = self.text_embedding(linetype)
+        
         x = nodeem
         lineem = self.token_embedding1(linenode)
-        lineem = torch.cat( [lineem, linemus.unsqueeze(-1).float()], dim=-1 )
+        lineem = torch.cat( [lineem, linemus.unsqueeze(-1).float(), linetype_em], dim=-1 ) # add linetype_em to this concatenation
+        
         x = torch.cat( [x, lineem], dim=1 )
-        line_t = torch.cat( [x, linetype], dim=-1 )
-        x = line_t
-
-
-        # nodeem = torch.cat( [nodeem, inputtext.unsqueeze( -1 ).float()], dim=-1 )
-        # x = nodeem
-        #--------------------------------------------
-        # padding_size = x.shape[1] - linemus.shape[1]
-        # padded_linemus = F.pad(linetype, (0, padding_size)).unsqueeze(-1).float()
-        # x = torch.cat([x, padded_linemus], dim=-1)
-        # lineem = self.token_embedding1( linenode )
-        # x = torch.cat([x, lineem], dim=1)
-        # x = torch.cat([x, linemus.unsqueeze(-1).float()], dim=-1)
-        #--------------------------------------------
-
-        
-        
-        check = 0
+            
         for trans in self.transformerBlocks:
-            check+=1
-            # print(check)
             x = trans.forward( x, nlmask, inputad )
+            
         x = x[:, :input_node.size( 1 )]
+        
         resSoftmax = F.softmax( self.resLinear2( x ).squeeze( -1 ).masked_fill( resmask == 0, -1e9 ), dim=-1 )
         loss = -torch.log( resSoftmax.clamp( min=1e-10, max=1 ) ) * res
         loss = loss.sum( dim=-1 )
