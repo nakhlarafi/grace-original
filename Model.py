@@ -76,22 +76,20 @@ class NlEncoder( nn.Module ):
         
         nodeem = self.token_embedding( input_node )
         nodeem = torch.cat([nodeem, inputtext.unsqueeze(-1).float()], dim=-1)
-        print('nlmask', nlmask.shape)
-        print('resmask', resmask.shape)
-        print('inputad', inputad.shape)
-        print('nodeem', nodeem.shape)
-        print('input_node', input_node.shape)
-        print('inputtext', inputtext.shape)
-        print('linenode', linenode.shape)
-        print('linetype', linetype.shape)
-        print('linemus', linemus.shape)
-        print('inputtype', inputtype.shape)
-        
         
         x = nodeem
-        linetype_em = self.linetype_embedding(linetype)
         lineem = self.token_embedding1(linenode)
-        lineem = torch.cat( [lineem, linemus.unsqueeze(-1).float(), linetype_em], dim=-1 ) # Concatenate linetype_em to lineem
+
+        # Normalize the counts to between 0 and 1
+        linemus_norm = linemus.float() / torch.max(linemus)
+        linetype_norm = linetype.float() / torch.max(linetype)
+
+        # Expand dimensions to match with x and lineem
+        linemus_exp = linemus_norm.unsqueeze(-1).expand_as(x)
+        linetype_exp = linetype_norm.unsqueeze(-1).expand_as(x)
+        
+        lineem = torch.cat( [lineem, linemus_exp, linetype_exp], dim=-1 )
+        
         x = torch.cat( [x, lineem], dim=1 )
             
         for trans in self.transformerBlocks:
