@@ -23,6 +23,7 @@ class NlEncoder( nn.Module ):
         self.token_embedding1 = nn.Embedding( args.Nl_Vocsize, self.embedding_size - 1 )
 
         self.text_embedding = nn.Embedding( 20, self.embedding_size )
+        self.linetype_embedding = nn.Embedding( args.Nl_Vocsize, self.embedding_size - 1)
         
         self.resLinear = nn.Linear( self.embedding_size, 2 )
         self.pos = PositionalEmbedding( self.embedding_size )
@@ -75,12 +76,11 @@ class NlEncoder( nn.Module ):
         nodeem = self.token_embedding( input_node )
         nodeem = torch.cat([nodeem, inputtext.unsqueeze(-1).float()], dim=-1)
         
-        # Embed linetype
-        linetype_em = self.text_embedding(linetype)
+        linetype_em = self.linetype_embedding(linetype)
         
         x = nodeem
         lineem = self.token_embedding1(linenode)
-        lineem = torch.cat( [lineem, linemus.unsqueeze(-1).float(), linetype_em], dim=-1 ) # add linetype_em to this concatenation
+        lineem = torch.cat( [lineem, linemus.unsqueeze(-1).float(), linetype_em], dim=-1 )
         
         x = torch.cat( [x, lineem], dim=1 )
             
