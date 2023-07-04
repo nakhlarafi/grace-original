@@ -20,7 +20,7 @@ class NlEncoder( nn.Module ):
         self.transformerBlocks = nn.ModuleList(
             [TransformerBlock( self.embedding_size, 8, self.feed_forward_hidden, 0.1 ) for _ in range(5)] )
         self.token_embedding = nn.Embedding( args.Nl_Vocsize, self.embedding_size - 1 )
-        self.token_embedding1 = nn.Embedding( args.Nl_Vocsize, self.embedding_size - 2 )
+        self.token_embedding1 = nn.Embedding( args.Nl_Vocsize, self.embedding_size - 1 )
 
         self.text_embedding = nn.Embedding( 20, self.embedding_size )
         
@@ -46,8 +46,8 @@ class NlEncoder( nn.Module ):
         x = nodeem
 
         lineem = self.token_embedding1(linenode)
-        lineem = torch.cat([lineem, linemus_norm.unsqueeze(-1).float(), linetype_norm.unsqueeze(-1).float()], dim=-1)  # include linetype_norm
-
+        # lineem = torch.cat([lineem, linemus_norm.unsqueeze(-1).float(), linetype_norm.unsqueeze(-1).float()], dim=-1)  # include linetype_norm
+        lineem = torch.cat([lineem, linetype_norm.unsqueeze(-1).float()], dim=-1)
         x = torch.cat([x, lineem], dim=1)
         for trans in self.transformerBlocks:
             x = trans.forward(x, nlmask, inputad)
