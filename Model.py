@@ -43,7 +43,7 @@ class NlEncoder( nn.Module ):
         lineem = self.token_embedding1(linenode)
         lineem = torch.cat( [lineem, linemus.unsqueeze(-1).float()], dim=-1 )
         x = torch.cat( [x, lineem], dim=1 )
-        line_t = torch.cat( [x, linetype.unsqueeze(-1).float()], dim=-1 )
+        line_t = torch.cat( [x, linetype], dim=-1 )
         x = line_t
 
 
