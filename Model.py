@@ -21,7 +21,6 @@ class NlEncoder( nn.Module ):
             [TransformerBlock( self.embedding_size, 2, self.feed_forward_hidden, 0.1 ) for _ in range(3)] )
         self.token_embedding = nn.Embedding( args.Nl_Vocsize, self.embedding_size - 1 )
         self.token_embedding1 = nn.Embedding( args.Nl_Vocsize, self.embedding_size - 1 )
-        self.linetype_embedding = nn.Embedding(args.Nl_Vocsize, self.embedding_size - 2)
 
         self.text_embedding = nn.Embedding( 20, self.embedding_size )
         
@@ -35,29 +34,27 @@ class NlEncoder( nn.Module ):
         self.resLinear2 = nn.Linear( self.embedding_size, 1 )
 
     def forward(self, input_node, inputtype, inputad, res, inputtext, linenode, linetype, linemus):
-        nlmask = torch.gt( input_node, 0 )
-        resmask = torch.eq( input_node, 2 )
+        nlmask = torch.gt(input_node, 0)
+        resmask = torch.eq(input_node, 2)
         inputad = inputad.float()
-        linemus_norm = linemus.float() / torch.max(linemus)
-        nodeem = self.token_embedding( input_node )
-        nodeem = torch.cat( [nodeem, inputtext.unsqueeze( -1 ).float()], dim=-1 )
-        x = nodeem
-        lineem = self.token_embedding1( linenode )
-        lineem = torch.cat([lineem, linemus_norm.unsqueeze(-1).float()], dim=-1)
-        
-        x = torch.cat( [x, lineem], dim=1 )
-        print('x', x.shape)
-        print('linetype', linetype.shape)
 
-        linetype_em = self.linetype_embedding(linetype)
-        x = torch.cat([x, linetype_em], dim=1)
-        check = 0
+        linemus_norm = linemus.float() / torch.max(linemus)
+        linetype_norm = linetype.float() / torch.max(linetype) # Normalize linetype
+
+        nodeem = self.token_embedding(input_node)
+        nodeem = torch.cat([nodeem, inputtext.unsqueeze(-1).float()], dim=-1)
+        x = nodeem
+
+        lineem = self.token_embedding1(linenode)
+        lineem = torch.cat([lineem, linemus_norm.unsqueeze(-1).float(), linetype_norm.unsqueeze(-1).float()], dim=-1)  # include linetype_norm
+
+        x = torch.cat([x, lineem], dim=1)
         for trans in self.transformerBlocks:
-            check+=1
-            # print(check)
-            x = trans.forward( x, nlmask, inputad )
-        x = x[:, :input_node.size( 1 )]
-        resSoftmax = F.softmax( self.resLinear2( x ).squeeze( -1 ).masked_fill( resmask == 0, -1e9 ), dim=-1 )
-        loss = -torch.log( resSoftmax.clamp( min=1e-10, max=1 ) ) * res
-        loss = loss.sum( dim=-1 )
+            x = trans.forward(x, nlmask, inputad)
+
+        x = x[:, :input_node.size(1)]
+        resSoftmax = F.softmax(self.resLinear2(x).squeeze(-1).masked_fill(resmask == 0, -1e9), dim=-1)
+        loss = -torch.log(resSoftmax.clamp(min=1e-10, max=1)) * res
+        loss = loss.sum(dim=-1)
+
         return loss, resSoftmax, x
