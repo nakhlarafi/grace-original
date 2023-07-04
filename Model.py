@@ -84,9 +84,9 @@ class NlEncoder( nn.Module ):
         linemus_norm = linemus.float() / torch.max(linemus)
         linetype_norm = linetype.float() / torch.max(linetype)
 
-        # Expand dimensions to match with x and lineem
-        linemus_exp = linemus_norm.unsqueeze(-1).expand_as(x)
-        linetype_exp = linetype_norm.unsqueeze(-1).expand_as(x)
+        # Expand dimensions to match with lineem
+        linemus_exp = linemus_norm.unsqueeze(-1).expand_as(lineem)
+        linetype_exp = linetype_norm.unsqueeze(-1).expand_as(lineem)
         
         lineem = torch.cat( [lineem, linemus_exp, linetype_exp], dim=-1 )
         
