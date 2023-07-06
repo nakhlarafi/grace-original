@@ -228,7 +228,7 @@ class SumDataset(data.Dataset):
                 rrdict[x['methods'][s]] = s[:s.index('(')]
             for i in range(methodnum):
                 nodes.append('Method')
-                mus.append(x['line_count'][i])
+                # mus.append(x['line_count'][i])
                 linetypes.append(x['modification'][i])
                 if len(rrdict[i].split(":")) > 1:
                     tokens = ".".join(rrdict[i].split(":")[0].split('.')[-2:] + [rrdict[i].split(":")[1]]) 

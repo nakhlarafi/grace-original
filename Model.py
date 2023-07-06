@@ -38,7 +38,7 @@ class NlEncoder( nn.Module ):
         resmask = torch.eq(input_node, 2)
         inputad = inputad.float()
 
-        linemus_norm = linemus.float() / torch.max(linemus)
+        # linemus_norm = linemus.float() / torch.max(linemus)
         # linetype_norm = linetype.float() / torch.max(linetype) # Normalize linetype
 
         nodeem = self.token_embedding(input_node)
