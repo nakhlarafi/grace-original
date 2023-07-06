@@ -68,7 +68,7 @@ def train(t = 5, p='Math'):
 
     torch.manual_seed(args.seed)
     np.random.seed(args.seed)  
-    random.seed(args.seed)
+    random.seed(args.seed + t)
     torch.cuda.manual_seed(args.seed)
     torch.cuda.manual_seed_all(args.seed) 
 
