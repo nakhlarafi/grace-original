@@ -11,7 +11,7 @@ singlenum = singlenums[project]
 totalnum = len(card) * singlenum
 lr = 1e-2
 seed = 0
-batch_size = 60
+batch_size = 30
 for i in tqdm(range(int(len(lst) / totalnum) + 1)):
     jobs = []
     for j in range(totalnum):
