@@ -19,7 +19,7 @@ class dotdict(dict):
     def __getattr__(self, name):
         return self[name]
 
-NlLen_map = {"Time":2500, "Math":4500, "Lang":100, "Chart": 1000, "Mockito":650, "unknown":2200}
+NlLen_map = {"Time":2000, "Math":4500, "Lang":100, "Chart": 1000, "Mockito":650, "unknown":2200}
 CodeLen_map = {"Time":1300, "Math":2700, "Lang":290, "Chart":5250, "Mockito":1176, "unknown":2800}
 args = dotdict({
     'NlLen':NlLen_map[sys.argv[2]],
@@ -119,9 +119,9 @@ def train(t = 5, p='Math'):
                             s = s.masked_fill(resmask == 0, 1e9)
                             pred = s.argsort(dim=-1)
                             pred = pred.data.cpu().numpy()
-                            print('-'*20)
-                            print(pred)
-                            print('-'*20)
+                            # print('-'*20)
+                            # print(pred)
+                            # print('-'*20)
                             alst = []
 
                             for k in range(len(pred)): 
