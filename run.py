@@ -114,9 +114,6 @@ def train(t = 5, p='Math'):
                             devBatch[i] = gVar(devBatch[i])
                         with torch.no_grad():
                             l, pre, _ = model(devBatch[0], devBatch[1], devBatch[2], devBatch[3], devBatch[4], devBatch[5], devBatch[6], devBatch[7])
-                            print('-'*20)
-                            print(pre)
-                            print('-'*20)
                             resmask = torch.eq(devBatch[0], 2)
                             s = -pre#-pre[:, :, 1]
                             s = s.masked_fill(resmask == 0, 1e9)
@@ -133,8 +130,10 @@ def train(t = 5, p='Math'):
                                     i = lst.index(x)
                                     maxn = min(maxn, i)
                                 score2.append(maxn)
-
                 each_epoch_pred[epoch] = lst
+                print('-'*20)
+                print(each_epoch_pred)
+                print('-'*20)
                 score = score2[0]
                 # print('curr accuracy is ' + str(score) + "," + str(score2))
                 if score2[0] == 0:
