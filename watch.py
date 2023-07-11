@@ -37,19 +37,19 @@ for _, i in enumerate(p):
         minl = min(minl, m)
     score2.append(minl)
     rrdic = {}
-    for x in f[i]['methods']:
-        rrdic[f[i]['methods'][x]] = x#".".join(x.split(":")[0].split(".")[-2:])
+    # for x in f[i]['methods']:
+    #     rrdic[f[i]['methods'][x]] = x#".".join(x.split(":")[0].split(".")[-2:])
     #rrdict = {}
     #for s in f[i]['ftest']:
     #    rrdict[f[i]['ftest'][s]] = ".".join(s.split(":")[0].split(".")[-2:])
-    for x in f[i]['ftest']:
-        print(splitCamel(".".join(x.split(":")[0].split(".")[-2:])), x, ".".join(x.split(":")[0].split(".")[-2:]))
-    print("-----")
-    for x in f[i]['ans']:
-        print(splitCamel(rrdic[x]), rrdic[x], ',')
-    print("-----")
-    print(rrdic, f[i]['ans'])
-    print(splitCamel(rrdic[xs[1][0]]), rrdic[xs[1][0]], ',', xs[1][0], f[i]['ans'])
+    # for x in f[i]['ftest']:
+    #     print(splitCamel(".".join(x.split(":")[0].split(".")[-2:])), x, ".".join(x.split(":")[0].split(".")[-2:]))
+    # print("-----")
+    # for x in f[i]['ans']:
+    #     print(splitCamel(rrdic[x]), rrdic[x], ',')
+    # print("-----")
+    # print(rrdic, f[i]['ans'])
+    # print(splitCamel(rrdic[xs[1][0]]), rrdic[xs[1][0]], ',', xs[1][0], f[i]['ans'])
     #print(f[i]['methods'], f[i]['ftest'], f[i]['ans'])
     for x in xs[2]:
         if x in eps:
@@ -61,22 +61,24 @@ for _, i in enumerate(p):
     #print(xs[2])
     #score.append(maxn)
 
+print(score)
+
 with open(pr + 'result_final_%d_%s_%s'%(seed,lr, batch_size), 'w') as pp:
     pp.write("lr: %f seed %d batch_size %d\n"%(lr, seed, batch_size))
     pp.write('num: %s\n'%len(p))
     # pp.write('%d: %d\n'%(10, eps[10]))
     pp.write(str(sorted(eps.items(), key=lambda x:x[1])))
 
-print(len(score))
+# print(len(score))
 a = []
 for i, x in enumerate(score):
     if x != 0:
         a.append(i)
-print(a)
-print(len(score))
-print(score.count(0))
-print(score2.count(0))
-print(eps)
+# print(a)
+# print(len(score))
+# print(score.count(0))
+# print(score2.count(0))
+# print(eps)
 c1 = 0
 for x in score:
     if x < 3:
@@ -85,11 +87,11 @@ c2 = 0
 for x in score:
     if x < 5:
         c2 += 1
-print('top35',c1, c2)
-print(sorted(eps.items(), key=lambda x:x[1]))
+# print('top35',c1, c2)
+# print(sorted(eps.items(), key=lambda x:x[1]))
 
-print(best_ids)
-print(len(best_ids))
+# print(best_ids)
+# print(len(best_ids))
 
 
 best_epoch = sorted(eps.items(), key=lambda x:x[1])[-1][0]
