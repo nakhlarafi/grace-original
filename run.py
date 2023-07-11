@@ -119,6 +119,9 @@ def train(t = 5, p='Math'):
                             s = s.masked_fill(resmask == 0, 1e9)
                             pred = s.argsort(dim=-1)
                             pred = pred.data.cpu().numpy()
+                            print('-'*20)
+                            print(pred)
+                            print('-'*20)
                             alst = []
 
                             for k in range(len(pred)): 
@@ -131,9 +134,7 @@ def train(t = 5, p='Math'):
                                     maxn = min(maxn, i)
                                 score2.append(maxn)
                 each_epoch_pred[epoch] = lst
-                print('-'*20)
-                print(each_epoch_pred)
-                print('-'*20)
+                
                 score = score2[0]
                 # print('curr accuracy is ' + str(score) + "," + str(score2))
                 if score2[0] == 0:
