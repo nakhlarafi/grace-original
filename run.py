@@ -1,4 +1,3 @@
-import pdb
 import torch
 from torch import optim
 from Dataset import SumDataset
@@ -99,7 +98,6 @@ def train(t = 5, p='Math'):
     bans = []
     batchn = []
     each_epoch_pred = {}
-    
     for x in dev_set.Nl_Voc:
       rdic[dev_set.Nl_Voc[x]] = x
     for epoch in range(15):
@@ -108,11 +106,9 @@ def train(t = 5, p='Math'):
             if index == 0:
                 accs = []
                 loss = []
-                
                 model = model.eval()
                 
                 score2 = []
-                
                 for k, devBatch in tqdm(enumerate(val_set.Get_Train(len(val_set)))):
                         for i in range(len(devBatch)):
                             devBatch[i] = gVar(devBatch[i])
@@ -121,35 +117,26 @@ def train(t = 5, p='Math'):
                             resmask = torch.eq(devBatch[0], 2)
                             s = -pre#-pre[:, :, 1]
                             s = s.masked_fill(resmask == 0, 1e9)
-                            # Convert tensors to numpy arrays for easy handling
-                            s_numpy = s.cpu().numpy()
                             pred = s.argsort(dim=-1)
                             pred = pred.data.cpu().numpy()
-                            s_score_dict = {}
-                            # Iterate over the pred array to form the dictionary
-                            for i in range(len(pred)):
-                                position = pred[i]
-                                score = s_numpy[i]
-                                s_score_dict[position] = score
-                            print('--' * 20)
-                            print(s_score_dict)
-                            pdb.set_trace()
-
+                            # print('-'*20)
+                            # print(pred)
+                            # print('-'*20)
                             alst = []
-
+                            score_dict = {}
                             for k in range(len(pred)): 
                                 datat = data[val_set.ids[k]]
                                 maxn = 1e9
                                 lst = pred[k].tolist()[:resmask.sum(dim=-1)[k].item()]#score = np.sum(loss) / numt
-                                print(lst)
-                                pdb.set_trace()
+                                for pos in lst:
+                                    score_dict[pos] = s[k, pos].item()
                                 #bans = lst
                                 for x in datat['ans']:
                                     i = lst.index(x)
                                     maxn = min(maxn, i)
                                 score2.append(maxn)
-
-                print(each_epoch_s)
+                            print('-'*20)
+                            print(score_dict)
                 each_epoch_pred[epoch] = lst
                 
                 score = score2[0]
@@ -188,8 +175,6 @@ if __name__ == "__main__":
     res = {}    
     p = sys.argv[2]
     res[int(sys.argv[1])] = train(int(sys.argv[1]), p)
-    # print(res)
-    # pdb.set_trace()
     open('%sres%d_%d_%s_%s.pkl'%(p, int(sys.argv[1]), args.seed, args.lr, args.batch_size), 'wb').write(pickle.dumps(res))
 
 
