@@ -1,3 +1,4 @@
+import pdb
 import torch
 from torch import optim
 from Dataset import SumDataset
@@ -142,6 +143,7 @@ def train(t = 5, p='Math'):
                                 score2.append(maxn)
                             print('-'*20)
                             print(score_dict)
+                            pdb.set_trace()
                 each_epoch_pred[epoch] = lst
                 
                 score = score2[0]
