@@ -113,8 +113,8 @@ mar = []
 for idx in p:
     xs = p[idx]
     each_epoch_pred = xs[3]
-    print(best_epoch)
     best_pred = each_epoch_pred[best_epoch]
+    score_pred = each_epoch_pred[str(best_epoch)+'_pred']
     print('%'*20)
     print(best_pred)
     ar = []
