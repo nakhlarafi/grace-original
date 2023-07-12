@@ -117,6 +117,7 @@ for idx in p:
     score_pred = each_epoch_pred[str(best_epoch)+'_pred']
     print('%'*20)
     print(best_pred)
+    print(score_pred)
     ar = []
     minl = 1e9
     for x in f[idx]['ans']:
