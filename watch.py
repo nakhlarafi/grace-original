@@ -31,7 +31,16 @@ for _, i in enumerate(p):
     xs = p[i]
     score.extend(xs[0])
     # print(xs)
-    print(i, xs[0], xs[1], xs[3][str(i)+'_pred'])
+    # print(i, xs[0], xs[1], xs[3])
+    print('###############')
+    print(i)
+    print('--------------')
+    print(xs[0])
+    print('--------------')
+    print(xs[1])
+    print('--------------')
+    print(xs[3])
+    print('###############')
     minl = 1e9
     for x in f[i]['ans']:
         m = xs[1].index(x)
