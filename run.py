@@ -99,7 +99,7 @@ def train(t = 5, p='Math'):
     bans = []
     batchn = []
     each_epoch_pred = {}
-    each_epoch_s = {}
+    
     for x in dev_set.Nl_Voc:
       rdic[dev_set.Nl_Voc[x]] = x
     for epoch in range(15):
@@ -108,6 +108,7 @@ def train(t = 5, p='Math'):
             if index == 0:
                 accs = []
                 loss = []
+                s_score_dict = {}
                 model = model.eval()
                 
                 score2 = []
@@ -120,13 +121,17 @@ def train(t = 5, p='Math'):
                             resmask = torch.eq(devBatch[0], 2)
                             s = -pre#-pre[:, :, 1]
                             s = s.masked_fill(resmask == 0, 1e9)
-                            # print('-'*20)
-                            print('-'*20)
-                            print(s)
-                            each_epoch_s[epoch] = s.cpu().numpy()
-                            print('-'*20)
+                            # Convert tensors to numpy arrays for easy handling
+                            s_numpy = s.cpu().numpy()
                             pred = s.argsort(dim=-1)
                             pred = pred.data.cpu().numpy()
+                            pred_numpy = pred.cpu().numpy()
+
+                            # Iterate over the pred array to form the dictionary
+                            for i in range(len(pred_numpy)):
+                                position = pred_numpy[i]
+                                score = s_numpy[position]
+                                s_score_dict[position] = score
                             # print(pred)
                             # pdb.set_trace()
                             alst = []
