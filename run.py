@@ -137,6 +137,8 @@ def train(t = 5, p='Math'):
                                     i = lst.index(x)
                                     maxn = min(maxn, i)
                                 score2.append(maxn)
+
+                print(lst)
                 each_epoch_pred[epoch] = lst
                 
                 score = score2[0]
