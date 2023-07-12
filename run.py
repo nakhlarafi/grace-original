@@ -132,8 +132,10 @@ def train(t = 5, p='Math'):
                                 position = pred_numpy[i]
                                 score = s_numpy[position]
                                 s_score_dict[position] = score
-                            # print(pred)
-                            # pdb.set_trace()
+                            print('--' * 20)
+                            print(s_score_dict)
+                            pdb.set_trace()
+
                             alst = []
 
                             for k in range(len(pred)): 
