@@ -108,7 +108,7 @@ def train(t = 5, p='Math'):
             if index == 0:
                 accs = []
                 loss = []
-                s_score_dict = {}
+                
                 model = model.eval()
                 
                 score2 = []
@@ -125,12 +125,11 @@ def train(t = 5, p='Math'):
                             s_numpy = s.cpu().numpy()
                             pred = s.argsort(dim=-1)
                             pred = pred.data.cpu().numpy()
-                            pred_numpy = pred.cpu().numpy()
-
+                            s_score_dict = {}
                             # Iterate over the pred array to form the dictionary
-                            for i in range(len(pred_numpy)):
-                                position = pred_numpy[i]
-                                score = s_numpy[position]
+                            for i in range(len(pred)):
+                                position = pred[i]
+                                score = s_numpy[i]
                                 s_score_dict[position] = score
                             print('--' * 20)
                             print(s_score_dict)
