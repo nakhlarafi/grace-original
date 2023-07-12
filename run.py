@@ -1,3 +1,4 @@
+import pdb
 import torch
 from torch import optim
 from Dataset import SumDataset
@@ -117,6 +118,9 @@ def train(t = 5, p='Math'):
                             resmask = torch.eq(devBatch[0], 2)
                             s = -pre#-pre[:, :, 1]
                             s = s.masked_fill(resmask == 0, 1e9)
+                            print('-'*20)
+                            print(s)
+                            pdb.set_trace()
                             pred = s.argsort(dim=-1)
                             pred = pred.data.cpu().numpy()
                             # print('-'*20)
@@ -171,7 +175,8 @@ if __name__ == "__main__":
     res = {}    
     p = sys.argv[2]
     res[int(sys.argv[1])] = train(int(sys.argv[1]), p)
-    print(res)
+    # print(res)
+    # pdb.set_trace()
     open('%sres%d_%d_%s_%s.pkl'%(p, int(sys.argv[1]), args.seed, args.lr, args.batch_size), 'wb').write(pickle.dumps(res))
 
 
