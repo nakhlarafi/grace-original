@@ -143,8 +143,9 @@ def train(t = 5, p='Math'):
                                 score2.append(maxn)
                             print('-'*20)
                             print(score_dict)
-                            pdb.set_trace()
+                            # pdb.set_trace()
                 each_epoch_pred[epoch] = lst
+                each_epoch_pred[str(epoch)+'_pred'] = score_dict
                 
                 score = score2[0]
                 # print('curr accuracy is ' + str(score) + "," + str(score2))
