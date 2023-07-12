@@ -132,7 +132,7 @@ def train(t = 5, p='Math'):
                                 datat = data[val_set.ids[k]]
                                 maxn = 1e9
                                 lst = pred[k].tolist()[:resmask.sum(dim=-1)[k].item()]#score = np.sum(loss) / numt
-                                print(datat)
+                                print(lst)
                                 pdb.set_trace()
                                 #bans = lst
                                 for x in datat['ans']:
