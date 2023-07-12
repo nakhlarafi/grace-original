@@ -119,12 +119,12 @@ def train(t = 5, p='Math'):
                             s = -pre#-pre[:, :, 1]
                             s = s.masked_fill(resmask == 0, 1e9)
                             # print('-'*20)
-                            # print(s)
+                            print('-'*20)
+                            print(s)
+                            print('-'*20)
                             pred = s.argsort(dim=-1)
                             pred = pred.data.cpu().numpy()
-                            print('-'*20)
-                            print(pred)
-                            print('-'*20)
+                            # print(pred)
                             # pdb.set_trace()
                             alst = []
 
