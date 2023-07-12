@@ -32,15 +32,15 @@ for _, i in enumerate(p):
     score.extend(xs[0])
     # print(xs)
     # print(i, xs[0], xs[1], xs[3])
-    print('###############')
-    print(i)
-    print('--------------')
-    print(xs[0])
-    print('--------------')
-    print(xs[1])
-    print('--------------')
-    print(xs[3])
-    print('###############')
+    # print('###############')
+    # print(i)
+    # print('--------------')
+    # print(xs[0])
+    # print('--------------')
+    # print(xs[1])
+    # print('--------------')
+    # print(xs[3])
+    # print('###############')
     minl = 1e9
     for x in f[i]['ans']:
         m = xs[1].index(x)
@@ -115,9 +115,11 @@ for idx in p:
     each_epoch_pred = xs[3]
     best_pred = each_epoch_pred[best_epoch]
     score_pred = each_epoch_pred[str(best_epoch)+'_pred']
-    print('%'*20)
+    print('-'*20)
+    print('Project Number:', idx)
     print(best_pred)
     print(score_pred)
+    print('-'*20)
     ar = []
     minl = 1e9
     for x in f[idx]['ans']:
