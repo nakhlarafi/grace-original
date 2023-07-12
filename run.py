@@ -99,6 +99,7 @@ def train(t = 5, p='Math'):
     bans = []
     batchn = []
     each_epoch_pred = {}
+    each_epoch_s = {}
     for x in dev_set.Nl_Voc:
       rdic[dev_set.Nl_Voc[x]] = x
     for epoch in range(15):
@@ -110,6 +111,7 @@ def train(t = 5, p='Math'):
                 model = model.eval()
                 
                 score2 = []
+                
                 for k, devBatch in tqdm(enumerate(val_set.Get_Train(len(val_set)))):
                         for i in range(len(devBatch)):
                             devBatch[i] = gVar(devBatch[i])
@@ -121,6 +123,7 @@ def train(t = 5, p='Math'):
                             # print('-'*20)
                             print('-'*20)
                             print(s)
+                            each_epoch_s[epoch] = s.cpu().numpy()
                             print('-'*20)
                             pred = s.argsort(dim=-1)
                             pred = pred.data.cpu().numpy()
@@ -140,7 +143,7 @@ def train(t = 5, p='Math'):
                                     maxn = min(maxn, i)
                                 score2.append(maxn)
 
-                print(lst)
+                print(each_epoch_s)
                 each_epoch_pred[epoch] = lst
                 
                 score = score2[0]
