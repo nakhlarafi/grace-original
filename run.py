@@ -171,6 +171,7 @@ if __name__ == "__main__":
     res = {}    
     p = sys.argv[2]
     res[int(sys.argv[1])] = train(int(sys.argv[1]), p)
+    print(res)
     open('%sres%d_%d_%s_%s.pkl'%(p, int(sys.argv[1]), args.seed, args.lr, args.batch_size), 'wb').write(pickle.dumps(res))
 
 
