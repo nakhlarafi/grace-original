@@ -114,6 +114,8 @@ for idx in p:
     xs = p[idx]
     each_epoch_pred = xs[3]
     best_pred = each_epoch_pred[best_epoch]
+    print('%'*20)
+    print(best_pred)
     ar = []
     minl = 1e9
     for x in f[idx]['ans']:
