@@ -118,14 +118,14 @@ def train(t = 5, p='Math'):
                             resmask = torch.eq(devBatch[0], 2)
                             s = -pre#-pre[:, :, 1]
                             s = s.masked_fill(resmask == 0, 1e9)
-                            print('-'*20)
-                            print(s)
-                            pdb.set_trace()
+                            # print('-'*20)
+                            # print(s)
                             pred = s.argsort(dim=-1)
                             pred = pred.data.cpu().numpy()
-                            # print('-'*20)
-                            # print(pred)
-                            # print('-'*20)
+                            print('-'*20)
+                            print(pred)
+                            print('-'*20)
+                            pdb.set_trace()
                             alst = []
 
                             for k in range(len(pred)): 
