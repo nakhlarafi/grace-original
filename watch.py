@@ -117,6 +117,7 @@ for idx in p:
     score_pred = each_epoch_pred[str(best_epoch)+'_pred']
     print('-'*20)
     print('Project Number:', idx)
+    print('Correct Answer:', f[idx]['ans'])
     print(best_pred)
     print(score_pred)
     print('-'*20)
