@@ -120,21 +120,30 @@ for idx in p:
     print('Correct Answer:', f[idx]['ans'])
     print(best_pred)
     print(score_pred)
-    print('-'*20)
     ar = []
     minl = 1e9
+    to1 = 0
+    to3 = 0
+    to5 = 0
     for x in f[idx]['ans']:
         m = best_pred.index(x)
         ar.append(m)
         minl = min(minl, m)
     if minl == 0:
         top1 += 1
+        to1 = 1
     if minl < 3:
         top3 += 1
+        to3 = 1
     if minl < 5:
         top5 += 1
+        to5 = 1
     mfr.append(minl)
     mar.append(np.mean(ar))
+    print('Top1:', to1)
+    print('Top3:', to3)
+    print('Top5:', to5)
+    print('-'*20)
 result_path = os.path.join("result-all")
 if not os.path.exists(result_path):
     os.makedirs(result_path)
