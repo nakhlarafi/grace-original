@@ -104,10 +104,68 @@ for x in score:
 # print(len(best_ids))
 
 
+# best_epoch = sorted(eps.items(), key=lambda x:x[1])[-1][0]
+# top1 = 0
+# top3 = 0
+# top5 = 0
+# mfr = []
+# mar = []
+# for idx in p:
+#     xs = p[idx]
+#     each_epoch_pred = xs[3]
+#     best_pred = each_epoch_pred[best_epoch]
+#     score_pred = each_epoch_pred[str(best_epoch)+'_pred']
+#     print('-'*20)
+#     print('Project Number:', idx)
+#     print('Correct Answer:', f[idx]['ans'])
+#     print(best_pred)
+#     print(score_pred)
+#     ar = []
+#     minl = 1e9
+#     to1 = 0
+#     to3 = 0
+#     to5 = 0
+#     for x in f[idx]['ans']:
+#         m = best_pred.index(x)
+#         ar.append(m)
+#         minl = min(minl, m)
+#     if minl == 0:
+#         top1 += 1
+#         to1 = 1
+#     if minl < 3:
+#         top3 += 1
+#         to3 = 1
+#     if minl < 5:
+#         top5 += 1
+#         to5 = 1
+#     mfr.append(minl)
+#     mar.append(np.mean(ar))
+#     print('Top1:', to1)
+#     print('Top3:', to3)
+#     print('Top5:', to5)
+#     print('-'*20)
+# result_path = os.path.join("result-all")
+# if not os.path.exists(result_path):
+#     os.makedirs(result_path)
+
+# print('-----------------------------')
+# print('top1:',top1)
+# print('top3:',top3)
+# print('top5:',top5)
+# print('mfr:',np.mean(mfr))
+# print('mar:',np.mean(mar))
+# print('-----------------------------')
+
+# with open(result_path + '/' + pr, 'w') as f:
+#     f.write('top1: %d\n'%top1)
+#     f.write('top3: %d\n'%top3)
+#     f.write('top5: %d\n'%top5)
+#     f.write('mfr: %f\n'%np.mean(mfr))
+#     f.write('mar: %f\n'%np.mean(mar))
+
+
 best_epoch = sorted(eps.items(), key=lambda x:x[1])[-1][0]
-top1 = 0
-top3 = 0
-top5 = 0
+top_count = [0] * 5  # list to count correct items in each position
 mfr = []
 mar = []
 for idx in p:
@@ -122,43 +180,27 @@ for idx in p:
     print(score_pred)
     ar = []
     minl = 1e9
-    to1 = 0
-    to3 = 0
-    to5 = 0
     for x in f[idx]['ans']:
         m = best_pred.index(x)
         ar.append(m)
         minl = min(minl, m)
-    if minl == 0:
-        top1 += 1
-        to1 = 1
-    if minl < 3:
-        top3 += 1
-        to3 = 1
-    if minl < 5:
-        top5 += 1
-        to5 = 1
+        if m < len(top_count):  # increment the count if the index is within the list length
+            top_count[m] += 1
     mfr.append(minl)
     mar.append(np.mean(ar))
-    print('Top1:', to1)
-    print('Top3:', to3)
-    print('Top5:', to5)
+    print('Top Counts:', top_count)
     print('-'*20)
 result_path = os.path.join("result-all")
 if not os.path.exists(result_path):
     os.makedirs(result_path)
 
 print('-----------------------------')
-print('top1:',top1)
-print('top3:',top3)
-print('top5:',top5)
+print('top counts:',top_count)
 print('mfr:',np.mean(mfr))
 print('mar:',np.mean(mar))
 print('-----------------------------')
 
 with open(result_path + '/' + pr, 'w') as f:
-    f.write('top1: %d\n'%top1)
-    f.write('top3: %d\n'%top3)
-    f.write('top5: %d\n'%top5)
+    f.write('top counts: %s\n' % str(top_count))
     f.write('mfr: %f\n'%np.mean(mfr))
     f.write('mar: %f\n'%np.mean(mar))
