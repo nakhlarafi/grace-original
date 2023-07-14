@@ -101,7 +101,7 @@ def train(t = 5, p='Math'):
     each_epoch_pred = {}
     for x in dev_set.Nl_Voc:
       rdic[dev_set.Nl_Voc[x]] = x
-    for epoch in range(15):
+    for epoch in range(20):
         index = 0
         for dBatch in tqdm(train_set.Get_Train(args.batch_size)):
             if index == 0:
@@ -135,10 +135,10 @@ def train(t = 5, p='Math'):
                                     i = lst.index(x)
                                     maxn = min(maxn, i)
                                 score2.append(maxn)
-                            print('-'*20)
-                            print(score_dict)
-                            print('-'*20)
-                            print(lst)
+                            # print('-'*20)
+                            # print(score_dict)
+                            # print('-'*20)
+                            # print(lst)
                             # pdb.set_trace()
                 each_epoch_pred[epoch] = lst
                 each_epoch_pred[str(epoch)+'_pred'] = score_dict
