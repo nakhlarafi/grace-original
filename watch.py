@@ -163,7 +163,6 @@ for x in score:
 #     f.write('mfr: %f\n'%np.mean(mfr))
 #     f.write('mar: %f\n'%np.mean(mar))
 
-
 best_epoch = sorted(eps.items(), key=lambda x:x[1])[-1][0]
 top_count = [0] * 5  # list to count correct items in each position
 mfr = []
@@ -190,17 +189,27 @@ for idx in p:
     mar.append(np.mean(ar))
     print('Top Counts:', top_count)
     print('-'*20)
+
+# calculate top-k values
+top1 = top_count[0]
+top3 = sum(top_count[:3])
+top5 = sum(top_count)
+
 result_path = os.path.join("result-all")
 if not os.path.exists(result_path):
     os.makedirs(result_path)
 
 print('-----------------------------')
-print('top counts:',top_count)
+print('top1:',top1)
+print('top3:',top3)
+print('top5:',top5)
 print('mfr:',np.mean(mfr))
 print('mar:',np.mean(mar))
 print('-----------------------------')
 
 with open(result_path + '/' + pr, 'w') as f:
-    f.write('top counts: %s\n' % str(top_count))
-    f.write('mfr: %f\n'%np.mean(mfr))
-    f.write('mar: %f\n'%np.mean(mar))
+    f.write('top1: %d\n' % top1)
+    f.write('top3: %d\n' % top3)
+    f.write('top5: %d\n' % top5)
+    f.write('mfr: %f\n' % np.mean(mfr))
+    f.write('mar: %f\n' % np.mean(mar))
