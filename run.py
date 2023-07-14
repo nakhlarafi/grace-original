@@ -101,7 +101,7 @@ def train(t = 5, p='Math'):
     each_epoch_pred = {}
     for x in dev_set.Nl_Voc:
       rdic[dev_set.Nl_Voc[x]] = x
-    for epoch in range(15):
+    for epoch in range(20):
         index = 0
         for dBatch in tqdm(train_set.Get_Train(args.batch_size)):
             if index == 0:
