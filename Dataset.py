@@ -380,7 +380,7 @@ class SumDataset(data.Dataset):
             inputText.append(self.pad_seq(overlap, self.Nl_Len))
             LineNodes.append(self.pad_seq(self.Get_Em(linenodes, self.Nl_Voc), self.Code_Len))
             LineTypes.append(self.pad_seq(linetypes, self.Code_Len))
-            Modification.append(self.pad_seq(modi, self.Nl_Len))
+            Modification.append(self.pad_seq(modi, self.Code_Len))
             row = {}
             col = {}
             for i  in range(len(nladrow)):
