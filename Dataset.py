@@ -187,6 +187,7 @@ class SumDataset(data.Dataset):
         LineNodes = []
         LineTypes = []
         LineMus = []
+        Modification = []
         Res = []
         inputText = []
         inputNlad = []
@@ -213,6 +214,7 @@ class SumDataset(data.Dataset):
                     
             nodes = []
             types = []
+            modi = []
             res = []
             nladrow = []
             nladcol = []
@@ -227,7 +229,7 @@ class SumDataset(data.Dataset):
             for s in x['methods']:
                 rrdict[x['methods'][s]] = s[:s.index('(')]
             for i in range(methodnum):
-                nodes.append('Method')
+                modi.append('Method')
                 # mus.append(x['line_count'][i])
                 linetypes.append(x['modification'][i])
                 if len(rrdict[i].split(":")) > 1:
@@ -273,10 +275,10 @@ class SumDataset(data.Dataset):
                 if x['ltype'][i] not in self.Nl_Voc:
                     self.Nl_Voc[x['ltype'][i]] = len(self.Nl_Voc)
                 linenodes.append(x['ltype'][i])
-                # if i in x['lcorrectnum']:
-                #     linetypes.append(x['lcorrectnum'][i])
-                # else:
-                #     linetypes.append(1)
+                if i in x['lcorrectnum']:
+                    linetypes.append(x['lcorrectnum'][i])
+                else:
+                    linetypes.append(1)
             maxl = max(maxl, len(nodes))
             maxl2 = max(maxl2, len(linenodes))
             ed = {}
@@ -378,6 +380,7 @@ class SumDataset(data.Dataset):
             inputText.append(self.pad_seq(overlap, self.Nl_Len))
             LineNodes.append(self.pad_seq(self.Get_Em(linenodes, self.Nl_Voc), self.Code_Len))
             LineTypes.append(self.pad_seq(linetypes, self.Code_Len))
+            Modification.append(self.pad_seq(modi, self.Nl_Len))
             row = {}
             col = {}
             for i  in range(len(nladrow)):
@@ -395,7 +398,7 @@ class SumDataset(data.Dataset):
         # print("correct: %d error: %d"%(correct, error))
         # print("error1: %d error2: %d"%(error1, error2))
 
-        batchs = [Nodes, Types, inputNlad, Res, inputText, LineNodes, LineTypes, LineMus]
+        batchs = [Nodes, Types, inputNlad, Res, inputText, LineNodes, LineTypes, LineMus, Modification]
         self.data = batchs
         open(self.proj + "data.pkl", "wb").write(pickle.dumps(batchs, protocol=4))
         return batchs
