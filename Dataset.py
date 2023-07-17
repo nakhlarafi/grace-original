@@ -229,7 +229,7 @@ class SumDataset(data.Dataset):
             for s in x['methods']:
                 rrdict[x['methods'][s]] = s[:s.index('(')]
             for i in range(methodnum):
-                modi.append('Method')
+                nodes.append('Method')
                 # mus.append(x['line_count'][i])
                 modi.append(x['modification'][i])
                 if len(rrdict[i].split(":")) > 1:
