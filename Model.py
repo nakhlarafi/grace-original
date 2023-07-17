@@ -19,8 +19,8 @@ class NlEncoder( nn.Module ):
         self.conv = nn.Conv2d( self.embedding_size, self.embedding_size, (1, self.word_len) )
         self.transformerBlocks = nn.ModuleList(
             [TransformerBlock( self.embedding_size, 8, self.feed_forward_hidden, 0.1 ) for _ in range(5)] )
-        self.token_embedding = nn.Embedding( args.Nl_Vocsize, self.embedding_size  )
-        self.token_embedding1 = nn.Embedding( args.Nl_Vocsize, self.embedding_size - 1 )
+        self.token_embedding = nn.Embedding( args.Nl_Vocsize, self.embedding_size - 2 )
+        self.token_embedding1 = nn.Embedding( args.Nl_Vocsize, self.embedding_size - 2 )
 
         self.text_embedding = nn.Embedding( 20, self.embedding_size )
         
