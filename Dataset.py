@@ -231,7 +231,7 @@ class SumDataset(data.Dataset):
             for i in range(methodnum):
                 modi.append('Method')
                 # mus.append(x['line_count'][i])
-                linetypes.append(x['modification'][i])
+                modi.append(x['modification'][i])
                 if len(rrdict[i].split(":")) > 1:
                     tokens = ".".join(rrdict[i].split(":")[0].split('.')[-2:] + [rrdict[i].split(":")[1]]) 
                 else:
