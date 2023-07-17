@@ -187,7 +187,7 @@ class SumDataset(data.Dataset):
         LineNodes = []
         LineTypes = []
         LineMus = []
-        Modification = []
+        # Modification = []
         Res = []
         inputText = []
         inputNlad = []
@@ -214,7 +214,7 @@ class SumDataset(data.Dataset):
                     
             nodes = []
             types = []
-            modi = []
+            # modi = []
             res = []
             nladrow = []
             nladcol = []
@@ -231,7 +231,7 @@ class SumDataset(data.Dataset):
             for i in range(methodnum):
                 nodes.append('Method')
                 # mus.append(x['line_count'][i])
-                modi.append(x['modification'][i])
+                # modi.append(x['modification'][i])
                 if len(rrdict[i].split(":")) > 1:
                     tokens = ".".join(rrdict[i].split(":")[0].split('.')[-2:] + [rrdict[i].split(":")[1]]) 
                 else:
@@ -380,7 +380,7 @@ class SumDataset(data.Dataset):
             inputText.append(self.pad_seq(overlap, self.Nl_Len))
             LineNodes.append(self.pad_seq(self.Get_Em(linenodes, self.Nl_Voc), self.Code_Len))
             LineTypes.append(self.pad_seq(linetypes, self.Code_Len))
-            Modification.append(self.pad_seq(modi, self.Code_Len))
+            # Modification.append(self.pad_seq(modi, self.Code_Len))
             row = {}
             col = {}
             for i  in range(len(nladrow)):
