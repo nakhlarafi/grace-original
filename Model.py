@@ -39,7 +39,7 @@ class NlEncoder( nn.Module ):
         inputad = inputad.float()
 
         # linemus_norm = linemus.float() / torch.max(linemus)
-        # linetype_norm = linetype.float() / torch.max(linetype) # Normalize linetype
+        modification = modification.float() / torch.max(modification) # Normalize linetype
         # print('Modification: ', modification.shape)
         # print('Inputtext: ', inputtext.shape)
         nodeem = self.token_embedding(input_node)
