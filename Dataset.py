@@ -143,7 +143,7 @@ class SumDataset(data.Dataset):
     #     else:
     #         return [1 for _ in lst]
 
-    def normalize_list(input_list):
+    def normalize_list(self, input_list):
         min_val = min(input_list)
         max_val = max(input_list)
 
