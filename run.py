@@ -20,8 +20,8 @@ class dotdict(dict):
     def __getattr__(self, name):
         return self[name]
 
-NlLen_map = {"Time":3900, "Math":4500, "Lang":900, "Chart": 1000, "Mockito":650, "unknown":2200}
-CodeLen_map = {"Time":1300, "Math":2700, "Lang":900, "Chart":5250, "Mockito":1176, "unknown":2800}
+NlLen_map = {"Time":3900, "Math":4500, "Lang":280, "Chart": 1000, "Mockito":650, "unknown":2200}
+CodeLen_map = {"Time":1300, "Math":2700, "Lang":300, "Chart":5250, "Mockito":1176, "unknown":2800}
 args = dotdict({
     'NlLen':NlLen_map[sys.argv[2]],
     'CodeLen':CodeLen_map[sys.argv[2]],
@@ -114,7 +114,7 @@ def train(t = 5, p='Math'):
                         for i in range(len(devBatch)):
                             devBatch[i] = gVar(devBatch[i])
                         with torch.no_grad():
-                            l, pre, _ = model(devBatch[0], devBatch[1], devBatch[2], devBatch[3], devBatch[4], devBatch[5])
+                            l, pre, _ = model(devBatch[0], devBatch[1], devBatch[2], devBatch[3], devBatch[4], devBatch[5], devBatch[6], devBatch[7], devBatch[8])
                             resmask = torch.eq(devBatch[0], 2)
                             s = -pre#-pre[:, :, 1]
                             s = s.masked_fill(resmask == 0, 1e9)
@@ -159,7 +159,7 @@ def train(t = 5, p='Math'):
                 model = model.train()
             for i in range(len(dBatch)):
                 dBatch[i] = gVar(dBatch[i])
-            loss, _, _ = model(dBatch[0], dBatch[1], dBatch[2], dBatch[3], dBatch[4], dBatch[5])
+            loss, _, _ = model(dBatch[0], dBatch[1], dBatch[2], dBatch[3], dBatch[4], dBatch[5], dBatch[6], dBatch[7], dBatch[8])
             # print(loss.mean().item())
             optimizer.zero_grad()
             loss = loss.mean()

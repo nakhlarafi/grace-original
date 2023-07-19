@@ -161,20 +161,10 @@ class SumDataset(data.Dataset):
             else:
                 ans.append(voc[x])
         return ans
-    # def pad_seq(self, seq, maxlen):
-    #     act_len = len(seq)
-    #     if len(seq) < maxlen:
-    #         seq = seq + [self.PAD_token] * (maxlen - len(seq))
-    #         seq = seq[:maxlen]
-    #     else:
-    #         seq = seq[:maxlen]
-    #         act_len = maxlen
-    #     return seq
-
     def pad_seq(self, seq, maxlen):
         act_len = len(seq)
         if len(seq) < maxlen:
-            seq = seq + [self.PAD_token] * maxlen
+            seq = seq + [self.PAD_token] * (maxlen - len(seq))
             seq = seq[:maxlen]
         else:
             seq = seq[:maxlen]
@@ -419,7 +409,7 @@ class SumDataset(data.Dataset):
         # print("correct: %d error: %d"%(correct, error))
         # print("error1: %d error2: %d"%(error1, error2))
 
-        batchs = [Nodes, inputNlad, Res, inputText, LineNodes, Modification]
+        batchs = [Nodes, Types, inputNlad, Res, inputText, LineNodes, LineTypes, LineMus, Modification]
         self.data = batchs
         open(self.proj + "data.pkl", "wb").write(pickle.dumps(batchs, protocol=4))
         return batchs
