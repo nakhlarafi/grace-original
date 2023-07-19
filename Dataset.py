@@ -382,7 +382,7 @@ class SumDataset(data.Dataset):
             #     nladval.append(1)
 
             overlap = self.getoverlap(texta, textb)
-            # modi = self.normalize_list(modi)
+            modi = self.normalize_list(modi)
             Nodes.append(self.pad_seq(self.Get_Em(nodes, self.Nl_Voc), self.Nl_Len))
             Types.append(self.pad_seq(types, self.Nl_Len))
             Res.append(self.pad_seq(res, self.Nl_Len))
@@ -408,7 +408,7 @@ class SumDataset(data.Dataset):
         # print("correct: %d error: %d"%(correct, error))
         # print("error1: %d error2: %d"%(error1, error2))
 
-        batchs = [Nodes, inputNlad, Res, inputText, LineNodes, Modification]
+        batchs = [Nodes, Types, inputNlad, Res, inputText, LineNodes, LineTypes, LineMus, Modification]
         self.data = batchs
         open(self.proj + "data.pkl", "wb").write(pickle.dumps(batchs, protocol=4))
         return batchs
