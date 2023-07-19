@@ -408,7 +408,7 @@ class SumDataset(data.Dataset):
         # print("correct: %d error: %d"%(correct, error))
         # print("error1: %d error2: %d"%(error1, error2))
 
-        batchs = [Nodes, Types, inputNlad, Res, inputText, LineNodes, LineTypes, LineMus, Modification]
+        batchs = [Nodes, inputNlad, Res, inputText, LineNodes, Modification]
         self.data = batchs
         open(self.proj + "data.pkl", "wb").write(pickle.dumps(batchs, protocol=4))
         return batchs
