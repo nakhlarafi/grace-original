@@ -164,12 +164,13 @@ class SumDataset(data.Dataset):
     def pad_seq(self, seq, maxlen):
         act_len = len(seq)
         if len(seq) < maxlen:
-            seq = seq + [self.PAD_token] * maxlen
+            seq = seq + [self.PAD_token] * (maxlen - len(seq))
             seq = seq[:maxlen]
         else:
             seq = seq[:maxlen]
             act_len = maxlen
         return seq
+
     def pad_list(self,seq, maxlen1, maxlen2):
         if len(seq) < maxlen1:
             seq = seq + [[self.PAD_token] * maxlen2] * maxlen1
