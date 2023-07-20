@@ -153,14 +153,14 @@ class SumDataset(data.Dataset):
 
         return [(i - min_val) / (max_val - min_val) for i in input_list]
     
-    # def Get_Em(self, WordList, voc):
-    #     ans = []
-    #     for x in WordList:
-    #         if x not in voc:
-    #             ans.append(1)
-    #         else:
-    #             ans.append(voc[x])
-    #     return ans
+    def Get_Em(self, WordList, voc):
+        ans = []
+        for x in WordList:
+            if x not in voc:
+                ans.append(1)
+            else:
+                ans.append(voc[x])
+        return ans
     def pad_seq(self, seq, maxlen):
         act_len = len(seq)
         if len(seq) < maxlen:
@@ -171,15 +171,15 @@ class SumDataset(data.Dataset):
             act_len = maxlen
         return seq
     
-    def pad_seq(self, seq, maxlen):
-        act_len = len(seq)
-        if len(seq) < maxlen:
-            seq = seq + [self.PAD_token] * (maxlen - len(seq))
-            seq = seq[:maxlen]
-        else:
-            seq = seq[:maxlen]
-            act_len = maxlen
-        return seq
+    # def pad_seq(self, seq, maxlen):
+    #     act_len = len(seq)
+    #     if len(seq) < maxlen:
+    #         seq = seq + [self.PAD_token] * (maxlen - len(seq))
+    #         seq = seq[:maxlen]
+    #     else:
+    #         seq = seq[:maxlen]
+    #         act_len = maxlen
+    #     return seq
 
     def pad_list(self,seq, maxlen1, maxlen2):
         if len(seq) < maxlen1:
