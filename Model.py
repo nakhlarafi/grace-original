@@ -14,22 +14,22 @@ class NlEncoder( nn.Module ):
         self.embedding_size = args.embedding_size
         self.nl_len = args.NlLen
         self.word_len = args.WoLen
-        self.char_embedding = nn.Embedding( args.Vocsize, self.embedding_size )
+        # self.char_embedding = nn.Embedding( args.Vocsize, self.embedding_size )
         self.feed_forward_hidden = 4 * self.embedding_size
-        self.conv = nn.Conv2d( self.embedding_size, self.embedding_size, (1, self.word_len) )
+        # self.conv = nn.Conv2d( self.embedding_size, self.embedding_size, (1, self.word_len) )
         self.transformerBlocks = nn.ModuleList(
             [TransformerBlock( self.embedding_size, 8, self.feed_forward_hidden, 0.1 ) for _ in range(5)] )
         self.token_embedding = nn.Embedding( args.Nl_Vocsize, self.embedding_size - 1 )
         self.token_embedding1 = nn.Embedding( args.Nl_Vocsize, self.embedding_size  -1 )
 
-        self.text_embedding = nn.Embedding( 20, self.embedding_size )
+        # self.text_embedding = nn.Embedding( 20, self.embedding_size )
         
-        self.resLinear = nn.Linear( self.embedding_size, 2 )
-        self.pos = PositionalEmbedding( self.embedding_size )
-        self.loss = nn.CrossEntropyLoss()
-        self.norm = LayerNorm( self.embedding_size )
-        self.lstm = nn.LSTM( self.embedding_size // 2, int( self.embedding_size / 4 ), batch_first=True,
-                             bidirectional=True )
+        # self.resLinear = nn.Linear( self.embedding_size, 2 )
+        # self.pos = PositionalEmbedding( self.embedding_size )
+        # self.loss = nn.CrossEntropyLoss()
+        # self.norm = LayerNorm( self.embedding_size )
+        # self.lstm = nn.LSTM( self.embedding_size // 2, int( self.embedding_size / 4 ), batch_first=True,
+        #                      bidirectional=True )
         self.conv = nn.Conv2d( self.embedding_size, self.embedding_size, (1, 10) )
         self.resLinear2 = nn.Linear( self.embedding_size, 1 )
 
