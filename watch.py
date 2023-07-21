@@ -140,10 +140,10 @@ for idx in p:
         to5 = 1
     mfr.append(minl)
     mar.append(np.mean(ar))
-    print('Top1:', to1)
-    print('Top3:', to3)
-    print('Top5:', to5)
-    print('-'*20)
+    # print('Top1:', to1)
+    # print('Top3:', to3)
+    # print('Top5:', to5)
+    # print('-'*20)
 result_path = os.path.join("result-all")
 if not os.path.exists(result_path):
     os.makedirs(result_path)
