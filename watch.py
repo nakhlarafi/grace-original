@@ -32,15 +32,15 @@ for _, i in enumerate(p):
     score.extend(xs[0])
     # print(xs)
     # print(i, xs[0], xs[1], xs[3])
-    # print('###############')
-    # print(i)
-    # print('--------------')
-    # print(xs[0])
-    # print('--------------')
-    # print(xs[1])
-    # print('--------------')
-    # print(xs[3])
-    # print('###############')
+    print('###############')
+    print(i)
+    print('--------------')
+    print(xs[0])
+    print('--------------')
+    print(xs[1])
+    print('--------------')
+    print(xs[3])
+    print('###############')
     minl = 1e9
     for x in f[i]['ans']:
         m = xs[1].index(x)
@@ -71,7 +71,7 @@ for _, i in enumerate(p):
     #print(xs[2])
     #score.append(maxn)
 
-print(score)
+# print(score)
 
 with open(pr + 'result_final_%d_%s_%s'%(seed,lr, batch_size), 'w') as pp:
     pp.write("lr: %f seed %d batch_size %d\n"%(lr, seed, batch_size))
@@ -116,10 +116,10 @@ for idx in p:
     best_pred = each_epoch_pred[best_epoch]
     score_pred = each_epoch_pred[str(best_epoch)+'_pred']
     print('-'*20)
-    print('Project Number:', idx)
-    print('Correct Answer:', f[idx]['ans'])
-    print(best_pred)
-    print(score_pred)
+    # print('Project Number:', idx)
+    # print('Correct Answer:', f[idx]['ans'])
+    # print(best_pred)
+    # print(score_pred)
     ar = []
     minl = 1e9
     to1 = 0
