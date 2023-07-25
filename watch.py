@@ -32,15 +32,15 @@ for _, i in enumerate(p):
     score.extend(xs[0])
     # print(xs)
     # print(i, xs[0], xs[1], xs[3])
-    print('###############')
-    print(i)
-    print('--------------')
-    print(xs[0])
-    print('--------------')
-    print(xs[1])
-    print('--------------')
-    print(xs[3])
-    print('###############')
+    # print('###############')
+    # print(i)
+    # print('--------------')
+    # print(xs[0])
+    # print('--------------')
+    # print(xs[1])
+    # print('--------------')
+    # print(xs[3])
+    # print('###############')
     minl = 1e9
     for x in f[i]['ans']:
         m = xs[1].index(x)
@@ -116,10 +116,10 @@ for idx in p:
     best_pred = each_epoch_pred[best_epoch]
     score_pred = each_epoch_pred[str(best_epoch)+'_pred']
     print('-'*20)
-    # print('Project Number:', idx)
-    # print('Correct Answer:', f[idx]['ans'])
-    # print(best_pred)
-    # print(score_pred)
+    print('Project Number:', idx)
+    print('Correct Answer:', f[idx]['ans'])
+    print(best_pred)
+    print(score_pred)
     ar = []
     minl = 1e9
     to1 = 0
@@ -140,10 +140,10 @@ for idx in p:
         to5 = 1
     mfr.append(minl)
     mar.append(np.mean(ar))
-    # print('Top1:', to1)
-    # print('Top3:', to3)
-    # print('Top5:', to5)
-    # print('-'*20)
+    print('Top1:', to1)
+    print('Top3:', to3)
+    print('Top5:', to5)
+    print('-'*20)
 result_path = os.path.join("result-all")
 if not os.path.exists(result_path):
     os.makedirs(result_path)
