@@ -160,7 +160,7 @@ def train(t = 5, p='Math'):
             for i in range(len(dBatch)):
                 dBatch[i] = gVar(dBatch[i])
             loss, _, _ = model(dBatch[0], dBatch[1], dBatch[2], dBatch[3], dBatch[4], dBatch[5], dBatch[6])
-            # print(loss.mean().item())
+            print(loss.mean().item())
             optimizer.zero_grad()
             loss = loss.mean()
             loss.backward()
