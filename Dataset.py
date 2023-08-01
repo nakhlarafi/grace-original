@@ -415,7 +415,7 @@ class SumDataset(data.Dataset):
                 nladval[i] = 1 / math.sqrt(row[nladrow[i]]) * 1 / math.sqrt(col[nladcol[i]])
             nlad = sparse.coo_matrix((nladval, (nladrow, nladcol)), shape=(self.Nl_Len + self.Code_Len, self.Nl_Len + self.Code_Len))
             inputNlad.append(nlad)
-        # print("max1: %d max2: %d"%(maxl, maxl2))
+        print("max1: %d max2: %d"%(maxl, maxl2))
         # print("correct: %d error: %d"%(correct, error))
         # print("error1: %d error2: %d"%(error1, error2))
 
