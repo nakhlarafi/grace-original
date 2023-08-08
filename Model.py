@@ -33,7 +33,7 @@ class NlEncoder( nn.Module ):
         self.conv = nn.Conv2d( self.embedding_size, self.embedding_size, (1, 10) )
         self.resLinear2 = nn.Linear( self.embedding_size, 1 )
 
-    def forward(self, input_node, inputtype, inputad, res, inputtext, linenode, linetype, linemus, modification):
+    def forward(self, input_node, inputtype, inputad, res, inputtext, linenode, linetype, linemus, modification, churn):
         nlmask = torch.gt(input_node, 0)
         resmask = torch.eq(input_node, 2)
         inputad = inputad.float()
@@ -52,7 +52,7 @@ class NlEncoder( nn.Module ):
         # print('modification: ', modification.shape)
         # print('linenode: ', linenode.shape)
         # lineem = torch.cat([lineem, linemus_norm.unsqueeze(-1).float(), linetype_norm.unsqueeze(-1).float()], dim=-1)  # include linetype_norm
-        lineem = torch.cat([lineem, modification.unsqueeze(-1).float()], dim=-1)
+        lineem = torch.cat([lineem, modification.unsqueeze(-1).float(), churn.unsqueeze(-1).float()], dim=-1)
         x = torch.cat([x, lineem], dim=1)
         for trans in self.transformerBlocks:
             x = trans.forward(x, nlmask, inputad)
