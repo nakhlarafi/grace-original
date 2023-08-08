@@ -393,7 +393,7 @@ class SumDataset(data.Dataset):
             #     nladval.append(1)
 
             overlap = self.getoverlap(texta, textb)
-            modi = self.normalize_list(modi)
+            # modi = self.normalize_list(modi)
             Nodes.append(self.pad_seq(self.Get_Em(nodes, self.Nl_Voc), self.Nl_Len))
             Types.append(self.pad_seq(types, self.Nl_Len))
             Res.append(self.pad_seq(res, self.Nl_Len))
