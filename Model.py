@@ -18,8 +18,7 @@ class NlEncoder( nn.Module ):
         self.feed_forward_hidden = 4 * self.embedding_size
         self.conv = nn.Conv2d( self.embedding_size, self.embedding_size, (1, self.word_len) )
         self.transformerBlocks = nn.ModuleList(
-            [TransformerBlock( self.embedding_size, 8, self.feed_forward_hidden, 0.1 ) for _ in range(5
-                                                                                                      )] )
+            [TransformerBlock( self.embedding_size, 1, self.feed_forward_hidden, 0.1 ) for _ in range(3)] )
         self.token_embedding = nn.Embedding( args.Nl_Vocsize, self.embedding_size - 1 )
         self.token_embedding1 = nn.Embedding( args.Nl_Vocsize, self.embedding_size  -1 )
 
@@ -40,7 +39,7 @@ class NlEncoder( nn.Module ):
         inputad = inputad.float()
 
         # linemus_norm = linemus.float() / torch.max(linemus)
-        modification = modification.float() / torch.max(modification) # Normalize linetype
+        # modification = modification.float() / torch.max(modification) # Normalize linetype
         # print('Modification: ', modification.shape)
         # print('Inputtext: ', inputtext.shape)
         nodeem = self.token_embedding(input_node)
