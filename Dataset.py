@@ -209,6 +209,7 @@ class SumDataset(data.Dataset):
         LineTypes = []
         LineMus = []
         Modification = []
+        Churn = []
         Res = []
         inputText = []
         inputNlad = []
@@ -240,6 +241,7 @@ class SumDataset(data.Dataset):
             nladrow = []
             nladcol = []
             nladval = []
+            ch = []
             texta = []
             textb = []
             linenodes = []
@@ -253,6 +255,7 @@ class SumDataset(data.Dataset):
                 nodes.append('Method')
                 # mus.append(x['line_count'][i])
                 modi.append(x['modification'][i])
+                ch.append(x['churn'][i])
                 if len(rrdict[i].split(":")) > 1:
                     tokens = ".".join(rrdict[i].split(":")[0].split('.')[-2:] + [rrdict[i].split(":")[1]]) 
                 else:
@@ -402,6 +405,7 @@ class SumDataset(data.Dataset):
             LineNodes.append(self.pad_seq(self.Get_Em(linenodes, self.Nl_Voc), self.Code_Len))
             LineTypes.append(self.pad_seq(linetypes, self.Code_Len))
             Modification.append(self.pad_seq(modi, self.Code_Len))
+            Churn.append(self.pad_seq(ch, self.Code_Len))
             row = {}
             col = {}
             for i  in range(len(nladrow)):
@@ -419,7 +423,7 @@ class SumDataset(data.Dataset):
         # print("correct: %d error: %d"%(correct, error))
         # print("error1: %d error2: %d"%(error1, error2))
 
-        batchs = [Nodes, Types, inputNlad, Res, inputText, LineNodes, LineTypes, LineMus, Modification]
+        batchs = [Nodes, Types, inputNlad, Res, inputText, LineNodes, LineTypes, LineMus, Modification, Churn]
         self.data = batchs
         open(self.proj + "data.pkl", "wb").write(pickle.dumps(batchs, protocol=4))
         return batchs
